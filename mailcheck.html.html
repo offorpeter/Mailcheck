@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MailCheck Pro — Bulk Email Validator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root {
+    --bg:#0d0f14;--surface:#141720;--card:#1b1f2e;--border:#252a3a;
+    --accent:#00e5a0;--accent2:#5b7fff;--warn:#ffb547;--danger:#ff5470;
+    --text:#e8eaf0;--muted:#6b7280;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 32px;display:flex;align-items:center;gap:14px;}
+  .logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+  header h1{font-family:'Space Mono',monospace;font-size:15px;letter-spacing:.05em;}
+  header span{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;}
+  .main{max-width:1100px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:720px){.main{grid-template-columns:1fr;}}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;}
+  .lbl{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
+  textarea{width:100%;min-height:180px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Mono',monospace;font-size:12px;padding:14px;resize:vertical;outline:none;transition:border-color .2s;line-height:1.7;}
+  textarea:focus{border-color:var(--accent2);}
+  textarea::placeholder{color:var(--muted);}
+  .drop{border:1.5px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;margin-top:12px;background:var(--surface);}
+  .drop:hover{border-color:var(--accent);background:rgba(0,229,160,.04);}
+  .drop .di{font-size:22px;margin-bottom:6px;}
+  .drop p{font-size:12px;color:var(--muted);}
+  .drop strong{color:var(--accent);font-size:13px;}
+  #fi{display:none;}
+  .cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+  .ci{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all .2s;user-select:none;}
+  .ci.active{border-color:var(--accent);background:rgba(0,229,160,.07);}
+  .dot{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:9px;font-weight:bold;color:#000;}
+  .ci.active .dot{background:var(--accent);border-color:var(--accent);}
+  .ci span{font-size:12px;font-weight:500;}
+  .ci small{font-size:10px;color:var(--muted);display:block;margin-top:1px;}
+  .btn{width:100%;padding:14px;border-radius:10px;border:none;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:all .2s;}
+  .btn-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;}
+  .btn-p:hover{opacity:.88;transform:translateY(-1px);}
+  .btn-p:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+  .sr{display:flex;gap:10px;margin-bottom:16px;}
+  .sb{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;}
+  .sb .n{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-bottom:2px;}
+  .sb .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+  .sb.valid .n{color:var(--accent);}
+  .sb.inv .n{color:var(--danger);}
+  .sb.warn .n{color:var(--warn);}
+  .sb.tot .n{color:var(--accent2);}
+  .pb{height:3px;background:var(--border);border-radius:2px;margin-bottom:14px;overflow:hidden;display:none;}
+  .pb.on{display:block;}
+  .pf{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .1s ease;width:0%;}
+  .fr{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+  .fb{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;}
+  .fb.active{border-color:var(--accent2);color:var(--accent2);background:rgba(91,127,255,.08);}
+  .rl{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;flex:1;}
+  .rl::-webkit-scrollbar{width:4px;}
+  .rl::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+  .rr{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:10px;animation:fi .2s ease both;}
+  @keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+  .et{font-family:'Space Mono',monospace;font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .is{font-size:10px;color:var(--muted);flex-shrink:0;max-width:160px;text-align:right;}
+  .badge{padding:3px 8px;border-radius:20px;font-size:10px;font-family:'Space Mono',monospace;font-weight:700;flex-shrink:0;}
+  .badge.valid{background:rgba(0,229,160,.12);color:var(--accent);}
+  .badge.invalid{background:rgba(255,84,112,.12);color:var(--danger);}
+  .badge.duplicate{background:rgba(255,181,71,.12);color:var(--warn);}
+  .badge.disposable{background:rgba(255,84,112,.18);color:var(--danger);}
+  .empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
+  .empty .ic{font-size:32px;margin-bottom:10px;}
+  .er{display:flex;gap:8px;margin-top:14px;}
+  .es{flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'Space Mono',monospace;cursor:pointer;transition:all .2s;}
+  .es:hover{border-color:var(--accent2);color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">✉</div>
+  <h1>MAILCHECK PRO</h1>
+  <span>Bulk Email Validator v1.0</span>
+</header>
+
+<div class="main">
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <div class="panel">
+      <div class="lbl">📋 Paste Emails</div>
+      <textarea id="ei" placeholder="One per line or comma-separated:&#10;&#10;alice@example.com&#10;bob@gmail.com&#10;invalid-email&#10;test@tempmail.com&#10;alice@example.com"></textarea>
+      <div class="drop" id="dz" onclick="document.getElementById('fi').click()">
+        <div class="di">📁</div>
+        <strong>Upload .txt or .csv</strong>
+        <p>Click to browse or drag &amp; drop</p>
+      </div>
+      <input type="file" id="fi" accept=".txt,.csv"/>
+    </div>
+
+    <div class="panel">
+      <div class="lbl">⚙️ Validation Checks</div>
+      <div class="cg">
+        <div class="ci active" data-c="format" onclick="tc(this)"><div class="dot">✓</div><div><span>Format / Syntax</span><small>RFC 5322 compliance</small></div></div>
+        <div class="ci active" data-c="domain" onclick="tc(this)"><div class="dot">✓</div><div><span>Domain Check</span><small>Valid TLD &amp; structure</small></div></div>
+        <div class="ci active" data-c="disposable" onclick="tc(this)"><div class="dot">✓</div><div><span>Disposable Detection</span><small>Temp/throwaway emails</small></div></div>
+        <div class="ci active" data-c="duplicate" onclick="tc(this)"><div class="dot">✓</div><div><span>Duplicate Detection</span><small>Flag repeated entries</small></div></div>
+      </div>
+      <button class="btn btn-p" id="rb" onclick="run()">▶ RUN VALIDATION</button>
+    </div>
+  </div>
+
+  <div class="panel" style="display:flex;flex-direction:column;">
+    <div class="lbl">📊 Results</div>
+    <div class="sr">
+      <div class="sb tot"><div class="n" id="st">0</div><div class="l">Total</div></div>
+      <div class="sb valid"><div class="n" id="sv">0</div><div class="l">Valid</div></div>
+      <div class="sb inv"><div class="n" id="si">0</div><div class="l">Invalid</div></div>
+      <div class="sb warn"><div class="n" id="sw">0</div><div class="l">Flagged</div></div>
+    </div>
+    <div class="pb" id="pb"><div class="pf" id="pf"></div></div>
+    <div class="fr">
+      <button class="fb active" onclick="sf('all',this)">All</button>
+      <button class="fb" onclick="sf('valid',this)">✅ Valid</button>
+      <button class="fb" onclick="sf('invalid',this)">❌ Invalid</button>
+      <button class="fb" onclick="sf('duplicate',this)">⚠️ Duplicate</button>
+      <button class="fb" onclick="sf('disposable',this)">🚫 Disposable</button>
+    </div>
+    <div class="rl" id="rl">
+      <div class="empty"><div class="ic">📭</div><p>Paste emails and click<br><strong style="color:var(--accent)">RUN VALIDATION</strong></p></div>
+    </div>
+    <div class="er" id="er" style="display:none;">
+      <button class="es" onclick="xCSV()">⬇ Export CSV</button>
+      <button class="es" onclick="xJSON()">⬇ Export JSON</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DISP=new Set(['tempmail.com','mailinator.com','guerrillamail.com','10minutemail.com','throwam.com','yopmail.com','trashmail.com','fakeinbox.com','maildrop.cc','sharklasers.com','guerrillamail.info','spam4.me','dispostable.com','mailnull.com','spamgourmet.com','trashmail.at','trashmail.io','discard.email','mytrashmail.com','mailscrap.com','getnada.com','spamex.com','mail.tm','getairmail.com','moakt.com','tempr.email','33mail.com','spamhereplease.com','binkmail.com','bob.email','clrmail.com','cock.li','fakemail.net','filzmail.com','meltmail.com','nwytg.com','safetymail.info','spambox.us','tempemail.net','tempinbox.com','throwablemail.com','wegwerfmail.de','zetmail.com','crazymailing.com','deadaddress.com','emailondeck.com','incognitomail.com','jetable.fr.nf','jourrapide.com','kasmail.com','mail-temporaire.fr','mt2015.com','mt2016.com','objectmail.com','oneoffmail.com','pookmail.com','privymail.de','rppkn.com','spamavert.com','trbvm.com','trdermail.com']);
+let res=[],ac=new Set(['format','domain','disposable','duplicate']),cf='all';
+
+function tc(el){const c=el.dataset.c;el.classList.toggle('active');ac.has(c)?ac.delete(c):ac.add(c);}
+
+function parse(raw){return raw.split(/[\n,;]+/).map(e=>e.trim().toLowerCase()).filter(Boolean);}
+
+function vFmt(e){return/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(e);}
+
+function vDom(e){const p=(e.split('@')[1]||'').split('.');if(p.length<2)return false;const t=p[p.length-1];return t.length>=2&&t.length<=12&&/^[a-z]+$/.test(t)&&p.every(x=>x.length>0&&/^[a-z0-9-]+$/.test(x));}
+
+function vDisp(e){return DISP.has((e.split('@')[1]||'').toLowerCase());}
+
+async function run(){
+  const raw=document.getElementById('ei').value;
+  if(!raw.trim()){alert('Please paste some emails first.');return;}
+  const emails=parse(raw);if(!emails.length)return;
+  document.getElementById('rb').disabled=true;
+  document.getElementById('rb').textContent='VALIDATING...';
+  const pb=document.getElementById('pb'),pf=document.getElementById('pf');
+  pb.classList.add('on');pf.style.width='0%';
+  res=[];const seen=new Map();
+  for(let i=0;i<emails.length;i++){
+    const e=emails[i];
+    await new Promise(r=>setTimeout(r,15));
+    const iss=[];let st='valid';
+    if(ac.has('format')&&!vFmt(e)){iss.push('Invalid format');st='invalid';}
+    if(st!=='invalid'&&ac.has('domain')&&!vDom(e)){iss.push('Bad domain');st='invalid';}
+    if(st!=='invalid'&&ac.has('disposable')&&vDisp(e)){iss.push('Disposable');st='disposable';}
+    if(ac.has('duplicate')){if(seen.has(e)){iss.push('Duplicate');if(st==='valid')st='duplicate';}else seen.set(e,true);}
+    res.push({email:e,status:st,issues:iss});
+    pf.style.width=((i+1)/emails.length*100)+'%';
+  }
+  document.getElementById('st').textContent=res.length;
+  document.getElementById('sv').textContent=res.filter(r=>r.status==='valid').length;
+  document.getElementById('si').textContent=res.filter(r=>r.status==='invalid').length;
+  document.getElementById('sw').textContent=res.filter(r=>r.status==='duplicate'||r.status==='disposable').length;
+  cf='all';document.querySelectorAll('.fb').forEach((b,i)=>b.classList.toggle('active',i===0));
+  render(res);
+  document.getElementById('er').style.display='flex';
+  document.getElementById('rb').disabled=false;
+  document.getElementById('rb').textContent='▶ RUN VALIDATION';
+  setTimeout(()=>pb.classList.remove('on'),600);
+}
+
+function sf(f,btn){cf=f;document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render(f==='all'?res:res.filter(r=>r.status===f));}
+
+function render(list){
+  const el=document.getElementById('rl');
+  if(!list.length){el.innerHTML='<div class="empty"><div class="ic">🔍</div><p>No results for this filter.</p></div>';return;}
+  el.innerHTML=list.map((r,i)=>`<div class="rr" style="animation-delay:${Math.min(i*.018,.35)}s"><span class="et" title="${r.email}">${r.email}</span><span class="is">${r.issues.join(' · ')}</span><span class="badge ${r.status}">${r.status.toUpperCase()}</span></div>`).join('');
+}
+
+function dl(name,content,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();}
+
+function xCSV(){
+  const rows=[['Email','Status','Issues']];
+  res.forEach(r=>rows.push([r.email,r.status,r.issues.join('; ')]));
+  dl('email_validation_report.csv',rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n'),'text/csv');
+}
+
+function xJSON(){
+  dl('email_validation_report.json',JSON.stringify({generated:new Date().toISOString(),total:res.length,results:res},null,2),'application/json');
+}
+
+document.getElementById('fi').addEventListener('change',function(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>document.getElementById('ei').value=ev.target.result;r.readAsText(f);
+});
+
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.style.borderColor='var(--accent)';});
+dz.addEventListener('dragleave',()=>dz.style.borderColor='');
+dz.addEventListener('drop',e=>{e.preventDefault();dz.style.borderColor='';const f=e.dataTransfer.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>document.getElementById('ei').value=ev.target.result;r.readAsText(f);});
+</script>
+</body>
+</html>
