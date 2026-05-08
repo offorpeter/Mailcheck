@@ -2160,38 +2160,142 @@ function toggleCheck(el, id) {
 }
 
 /* ============================================================
-   VALIDATION ENGINE
+   VALIDATION ENGINE  (hardened v2.1)
    ============================================================ */
+
+/* --- Helpers --- */
+// Real TLD list (common ones — blocks made-up extensions like .xyz123, .fakeee)
+const KNOWN_TLDS = new Set([
+  'com','net','org','edu','gov','mil','int','io','co','ai','app','dev',
+  'uk','us','ca','de','fr','au','ng','za','in','jp','cn','br','mx','ru',
+  'eu','es','it','nl','be','ch','at','se','no','dk','fi','pl','cz','hu',
+  'ro','gr','pt','ie','nz','sg','hk','tw','kr','th','id','my','ph','vn',
+  'info','biz','me','tv','studio','tech','online','site','store','shop',
+  'blog','news','media','digital','agency','email','mail','cloud',
+  'finance','health','global','pro','name','mobi','coop','aero','museum',
+  'travel','jobs','tel','cat','post','xxx','xxx','ac','ad','ae','af',
+  'ag','al','am','an','ao','aq','ar','as','az','ba','bb','bd','bf','bg',
+  'bh','bi','bj','bm','bn','bo','bs','bt','bv','bw','by','bz','cc','cd',
+  'cf','cg','ci','ck','cl','cm','cr','cu','cv','cx','cy','cz','dj','dk',
+  'dm','do','dz','ec','ee','eg','er','et','fi','fj','fk','fm','fo','ga',
+  'gd','ge','gf','gg','gh','gi','gl','gm','gn','gp','gq','gr','gs','gt',
+  'gu','gw','gy','hr','ht','im','iq','ir','is','je','jm','jo','ke','kg',
+  'kh','ki','km','kn','kp','kw','ky','kz','la','lb','lc','li','lk','lr',
+  'ls','lt','lu','lv','ly','ma','mc','md','mg','mh','mk','ml','mm','mn',
+  'mo','mp','mq','mr','ms','mt','mu','mv','mw','mz','na','nc','ne','nf',
+  'ni','np','nr','nu','om','pa','pe','pf','pg','pk','pm','pn','pr','ps',
+  'pw','py','qa','re','rw','sa','sb','sc','sd','sl','sm','sn','so','sr',
+  'ss','st','sv','sx','sy','sz','tc','td','tf','tg','tj','tk','tl','tm',
+  'tn','to','tr','tt','to','tz','ua','ug','um','uy','uz','va','vc','ve',
+  'vg','vi','vu','wf','ws','ye','yt','zm','zw',
+  // New gTLDs
+  'academy','accountant','accountants','actor','adult','agency','apartments',
+  'app','associates','auction','audio','band','bar','bargains','beer',
+  'bike','bingo','black','blue','boutique','broker','build','builders',
+  'business','cab','camera','camp','capital','cards','care','careers',
+  'cash','casino','catering','center','ceo','chat','cheap','church',
+  'city','claims','cleaning','click','clinic','clothing','club','codes',
+  'coffee','college','community','company','computer','condos','consulting',
+  'contractors','cool','coupons','credit','cruises','dating','deals',
+  'delivery','democrat','dental','design','diamonds','diet','directory',
+  'discount','dog','domains','education','energy','engineering','enterprises',
+  'equipment','estate','events','exchange','expert','exposed','fail',
+  'farm','finance','fitness','florist','football','fund','furniture',
+  'gallery','gifts','gives','golf','graphics','gripe','guide','guitars',
+  'guru','healthcare','holiday','homes','host','hosting','house','immo',
+  'industries','institute','international','investments','kitchen','land',
+  'lease','legal','life','lighting','limited','limo','link','live','loan',
+  'loans','management','marketing','mba','media','memorial','moda','money',
+  'mortgage','network','ninja','partners','parts','photo','photography',
+  'photos','pictures','pink','pizza','place','plumbing','plus','productions',
+  'properties','property','pub','recipes','red','rehab','reise','reisen',
+  'rentals','repair','report','republican','restaurant','reviews','rip',
+  'rocks','run','sale','salon','school','services','show','singles',
+  'social','solar','solutions','support','surgery','systems','tax','taxi',
+  'tienda','tips','today','tools','tours','town','training','university',
+  'ventures','video','villas','vision','vote','voting','voyage','watch',
+  'wiki','works','world','wtf','zone'
+]);
+
+function isKnownTld(tld) {
+  return KNOWN_TLDS.has(tld.toLowerCase());
+}
+
+// Checks for "looks random / gibberish" domains: e.g. xkj3qz.com
+function looksRandom(domain) {
+  const sld = domain.split('.')[0]; // second-level domain
+  if (sld.length < 3) return false;
+  // High consonant ratio with no vowels ≥ 5 chars = likely random
+  const vowels = (sld.match(/[aeiou]/gi)||[]).length;
+  const consonants = (sld.match(/[bcdfghjklmnpqrstvwxyz]/gi)||[]).length;
+  if (sld.length >= 6 && vowels === 0) return true;
+  if (sld.length >= 8 && vowels / sld.length < 0.1) return true;
+  // Alternating random pattern: xj3kq9
+  if (/^[^aeiou]{2,}[0-9]+[^aeiou]{2,}$/i.test(sld)) return true;
+  return false;
+}
+
+// Checks for "obviously fake" local parts: aaaaaa, qwerty, 123456, asdf, etc.
+function looksLikeFakeLocal(local) {
+  const l = local.toLowerCase();
+  // All same character repeated
+  if (/^(.)\1{4,}$/.test(l)) return true;
+  // Keyboard walks
+  if (['qwerty','asdf','zxcv','qwert','asdfg','zxcvb','1234','123456','abcd','abcde','abcdef'].some(k=>l.includes(k))) return true;
+  // All digits
+  if (/^\d+$/.test(l)) return true;
+  // Very short nonsense (1-2 chars random)
+  if (l.length <= 1) return true;
+  return false;
+}
+
 function validateEmail(email) {
   const checks = {};
   const issues = [];
   let riskScore = 0;
 
-  const local = email.includes('@') ? email.split('@')[0] : email;
-  const domain = email.includes('@') ? email.split('@')[1] : '';
-  const tld = domain.includes('.') ? domain.split('.').pop() : '';
+  // Normalise — strip surrounding whitespace, lowercase
+  email = email.trim().toLowerCase();
 
-  // 1. FORMAT
+  // Guard: must contain exactly one @
+  if ((email.match(/@/g)||[]).length !== 1) {
+    return { email, status:'invalid', issues:['Missing or multiple @'], checks:{ format:'fail' }, riskScore:100 };
+  }
+
+  const [local, domain] = email.split('@');
+  const domainParts = domain ? domain.split('.') : [];
+  const tld = domainParts.length >= 2 ? domainParts[domainParts.length - 1] : '';
+  const sld = domainParts.length >= 2 ? domainParts[domainParts.length - 2] : '';
+
+  // 1. FORMAT — strict RFC 5322 subset
   if (state.activeChecks.has('format')) {
-    const ok = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(email)
-      && !/\.\./.test(email) && !email.startsWith('.') && !local.startsWith('.') && !local.endsWith('.');
+    const localOk  = /^[a-z0-9]([a-z0-9._%+\-]*[a-z0-9])?$/.test(local);   // must start & end with alnum
+    const domainOk = /^[a-z0-9]([a-z0-9\-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9\-]*[a-z0-9])?)+$/.test(domain);
+    const noDouble = !/\.\./.test(email);
+    const ok = localOk && domainOk && noDouble && local.length > 0 && domain.length > 0;
     checks.format = ok ? 'pass' : 'fail';
     if (!ok) { issues.push('Invalid format'); riskScore += 40; }
   }
 
-  // 2. DOMAIN
+  // 2. DOMAIN STRUCTURE + TLD must be real
   if (state.activeChecks.has('domain')) {
-    const ok = domain.length > 0 && tld.length >= 2 && tld.length <= 12
-      && /^[a-z]+$/.test(tld) && domain.split('.').every(p => p.length > 0 && /^[a-z0-9-]+$/i.test(p));
+    const tldReal   = isKnownTld(tld);
+    const tldValid  = tld.length >= 2 && tld.length <= 18 && /^[a-z]+$/.test(tld);
+    const partsOk   = domainParts.length >= 2 && domainParts.every(p => p.length > 0 && /^[a-z0-9-]+$/.test(p) && !p.startsWith('-') && !p.endsWith('-'));
+    const ok = tldValid && partsOk && tldReal;
     checks.domain = ok ? 'pass' : 'fail';
-    if (!ok) { issues.push('Bad domain'); riskScore += 30; }
+    if (!ok) {
+      if (!tldReal && tldValid) issues.push(`Unknown TLD (.${tld})`);
+      else issues.push('Bad domain');
+      riskScore += 35;
+    }
   }
 
-  // 3. MX SIMULATION
+  // 3. MX SIMULATION (known dead/placeholder domains)
   if (state.activeChecks.has('mx')) {
     const ok = !BAD_MX_DOMAINS.has(domain.toLowerCase());
     checks.mx = ok ? 'pass' : 'fail';
-    if (!ok) { issues.push('No MX record'); riskScore += 25; }
+    if (!ok) { issues.push('No MX record'); riskScore += 30; }
   }
 
   // 4. DISPOSABLE
@@ -2201,28 +2305,28 @@ function validateEmail(email) {
     if (isDisp) { issues.push('Disposable email'); riskScore += 60; }
   }
 
-  // 5. ROLE (checked during bulk)
+  // 5. ROLE-BASED
   if (state.activeChecks.has('role')) {
-    const isRole = ROLE_PREFIXES.has(local.toLowerCase().replace(/[0-9_.-]/g,''));
+    // Check exact local part AND common role patterns
+    const cleanLocal = local.replace(/[0-9_.\-+]/g,'');
+    const isRole = ROLE_PREFIXES.has(cleanLocal) || ROLE_PREFIXES.has(local);
     checks.role = isRole ? 'warn' : 'pass';
-    if (isRole) { issues.push('Role-based address'); riskScore += 15; }
+    if (isRole) { issues.push('Role-based address'); riskScore += 20; }
   }
 
-  // 6. LENGTH
+  // 6. LENGTH (RFC 5321)
   if (state.activeChecks.has('length')) {
-    const localOk = local.length <= 64;
-    const domainOk = domain.length <= 255;
-    const totalOk = email.length <= 320;
-    const ok = localOk && domainOk && totalOk;
+    const ok = local.length >= 1 && local.length <= 64 && domain.length <= 255 && email.length <= 320;
     checks.length = ok ? 'pass' : 'fail';
     if (!ok) { issues.push('Exceeds length limit'); riskScore += 20; }
   }
 
-  // 7. SPECIAL CHARS
+  // 7. SPECIAL CHAR ABUSE
   if (state.activeChecks.has('chars')) {
-    const doubleAt = (email.match(/@/g)||[]).length > 1;
-    const badChars = /[<>()[\]\\,;:\s"]/.test(local);
-    const ok = !doubleAt && !badChars;
+    const badChars = /[<>()\[\]\\,;:\s"']/.test(local);
+    const consecDots = /\.{2,}/.test(email);
+    const edgeDot = local.startsWith('.') || local.endsWith('.');
+    const ok = !badChars && !consecDots && !edgeDot;
     checks.chars = ok ? 'pass' : 'fail';
     if (!ok) { issues.push('Illegal characters'); riskScore += 25; }
   }
@@ -2234,19 +2338,46 @@ function validateEmail(email) {
     if (isFree) { issues.push('Free provider'); riskScore += 5; }
   }
 
-  // 9. TYPO
+  // 9. TYPO DETECTION
   if (state.activeChecks.has('typo')) {
     const typo = TYPO_PATTERNS.find(t => t.pattern.test(domain));
     checks.typo = typo ? 'warn' : 'pass';
     if (typo) { issues.push(`Possible typo → ${typo.fix}`); riskScore += 20; }
   }
 
+  // 10. GIBBERISH / RANDOM-LOOKING DOMAIN (always on)
+  if (looksRandom(domain)) {
+    checks.gibberish = 'warn';
+    issues.push('Looks like a random/fake domain');
+    riskScore += 45;
+  } else {
+    checks.gibberish = 'pass';
+  }
+
+  // 11. FAKE / NONSENSE LOCAL PART (always on)
+  if (looksLikeFakeLocal(local)) {
+    checks.fakelocal = 'warn';
+    issues.push('Local part looks fake or nonsensical');
+    riskScore += 30;
+  } else {
+    checks.fakelocal = 'pass';
+  }
+
   // Determine overall status
   let status = 'valid';
   const failedCritical = ['format','domain','mx','length','chars'].some(k => checks[k]==='fail');
-  if (failedCritical) status = 'invalid';
-  else if (checks.disposable==='fail') status = 'disposable';
-  else if (checks.role==='warn') status = 'role';
+  const highRisk = riskScore >= 65;
+
+  if (failedCritical) {
+    status = 'invalid';
+  } else if (checks.disposable === 'fail') {
+    status = 'disposable';
+  } else if (checks.gibberish === 'warn' || checks.fakelocal === 'warn' || highRisk) {
+    // If gibberish domain or fake local, mark as invalid rather than slipping through as valid
+    status = 'invalid';
+  } else if (checks.role === 'warn') {
+    status = 'role';
+  }
 
   riskScore = Math.min(100, riskScore);
 
