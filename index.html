@@ -1,213 +1,2727 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MailCheck Pro — Bulk Email Validator</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MailCheck Pro — Professional Email Validation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
-  :root {
-    --bg:#0d0f14;--surface:#141720;--card:#1b1f2e;--border:#252a3a;
-    --accent:#00e5a0;--accent2:#5b7fff;--warn:#ffb547;--danger:#ff5470;
-    --text:#e8eaf0;--muted:#6b7280;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
-  header{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 32px;display:flex;align-items:center;gap:14px;}
-  .logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-  header h1{font-family:'Space Mono',monospace;font-size:15px;letter-spacing:.05em;}
-  header span{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;}
-  .main{max-width:1100px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-  @media(max-width:720px){.main{grid-template-columns:1fr;}}
-  .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;}
-  .lbl{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
-  textarea{width:100%;min-height:180px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Space Mono',monospace;font-size:12px;padding:14px;resize:vertical;outline:none;transition:border-color .2s;line-height:1.7;}
-  textarea:focus{border-color:var(--accent2);}
-  textarea::placeholder{color:var(--muted);}
-  .drop{border:1.5px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;margin-top:12px;background:var(--surface);}
-  .drop:hover{border-color:var(--accent);background:rgba(0,229,160,.04);}
-  .drop .di{font-size:22px;margin-bottom:6px;}
-  .drop p{font-size:12px;color:var(--muted);}
-  .drop strong{color:var(--accent);font-size:13px;}
-  #fi{display:none;}
-  .cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
-  .ci{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all .2s;user-select:none;}
-  .ci.active{border-color:var(--accent);background:rgba(0,229,160,.07);}
-  .dot{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:9px;font-weight:bold;color:#000;}
-  .ci.active .dot{background:var(--accent);border-color:var(--accent);}
-  .ci span{font-size:12px;font-weight:500;}
-  .ci small{font-size:10px;color:var(--muted);display:block;margin-top:1px;}
-  .btn{width:100%;padding:14px;border-radius:10px;border:none;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:all .2s;}
-  .btn-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;}
-  .btn-p:hover{opacity:.88;transform:translateY(-1px);}
-  .btn-p:disabled{opacity:.4;cursor:not-allowed;transform:none;}
-  .sr{display:flex;gap:10px;margin-bottom:16px;}
-  .sb{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;}
-  .sb .n{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-bottom:2px;}
-  .sb .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
-  .sb.valid .n{color:var(--accent);}
-  .sb.inv .n{color:var(--danger);}
-  .sb.warn .n{color:var(--warn);}
-  .sb.tot .n{color:var(--accent2);}
-  .pb{height:3px;background:var(--border);border-radius:2px;margin-bottom:14px;overflow:hidden;display:none;}
-  .pb.on{display:block;}
-  .pf{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .1s ease;width:0%;}
-  .fr{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
-  .fb{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;}
-  .fb.active{border-color:var(--accent2);color:var(--accent2);background:rgba(91,127,255,.08);}
-  .rl{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;flex:1;}
-  .rl::-webkit-scrollbar{width:4px;}
-  .rl::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-  .rr{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:10px;animation:fi .2s ease both;}
-  @keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
-  .et{font-family:'Space Mono',monospace;font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .is{font-size:10px;color:var(--muted);flex-shrink:0;max-width:160px;text-align:right;}
-  .badge{padding:3px 8px;border-radius:20px;font-size:10px;font-family:'Space Mono',monospace;font-weight:700;flex-shrink:0;}
-  .badge.valid{background:rgba(0,229,160,.12);color:var(--accent);}
-  .badge.invalid{background:rgba(255,84,112,.12);color:var(--danger);}
-  .badge.duplicate{background:rgba(255,181,71,.12);color:var(--warn);}
-  .badge.disposable{background:rgba(255,84,112,.18);color:var(--danger);}
-  .empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
-  .empty .ic{font-size:32px;margin-bottom:10px;}
-  .er{display:flex;gap:8px;margin-top:14px;}
-  .es{flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-family:'Space Mono',monospace;cursor:pointer;transition:all .2s;}
-  .es:hover{border-color:var(--accent2);color:var(--accent2);}
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root {
+  --bg: #080a0f;
+  --bg2: #0d1018;
+  --surface: #111520;
+  --card: #151a27;
+  --card2: #1a2035;
+  --border: #1f2840;
+  --border2: #263050;
+  --accent: #c9a84c;
+  --accent-glow: rgba(201,168,76,0.15);
+  --accent2: #4c7bc9;
+  --accent2-glow: rgba(76,123,201,0.12);
+  --danger: #e05555;
+  --danger-glow: rgba(224,85,85,0.12);
+  --warn: #e09a35;
+  --success: #4caf82;
+  --success-glow: rgba(76,175,130,0.12);
+  --text: #e8edf8;
+  --text2: #9aa3b8;
+  --text3: #5a6380;
+  --font-display: 'Cormorant Garamond', serif;
+  --font-ui: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar: 240px;
+}
+
+[data-theme="light"] {
+  --bg: #f0f2f8;
+  --bg2: #e8ebf4;
+  --surface: #ffffff;
+  --card: #f8f9fc;
+  --card2: #eef0f8;
+  --border: #dde1ee;
+  --border2: #c8cfe4;
+  --text: #0d1018;
+  --text2: #4a5270;
+  --text3: #8890a8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background .3s, color .3s;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+/* ============================================================
+   AUTH SCREEN
+   ============================================================ */
+#auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 30% 40%, rgba(201,168,76,0.07) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 80% at 80% 80%, rgba(76,123,201,0.06) 0%, transparent 60%);
+}
+
+.auth-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+}
+
+.auth-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 48px 40px;
+  width: 420px;
+  max-width: 95vw;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.05);
+  animation: authSlide .5s ease both;
+}
+
+@keyframes authSlide {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+.auth-logo {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 32px;
+}
+
+.auth-logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent), #e8c870);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+}
+
+.auth-logo h1 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.auth-logo span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 1px;
+}
+
+.auth-tabs {
+  display: flex;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+}
+
+.auth-tab {
+  flex: 1; padding: 9px;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text3);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all .2s;
+  border: none; background: none;
+  letter-spacing: 0.05em;
+}
+
+.auth-tab.active {
+  background: var(--card2);
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.form-group { margin-bottom: 16px; }
+
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-bottom: 7px;
+}
+
+.form-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-input::placeholder { color: var(--text3); }
+
+.btn-auth {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent), #e8c870);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0a0800;
+  cursor: pointer;
+  transition: all .2s;
+  margin-top: 8px;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+}
+
+.btn-auth:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,168,76,0.35); }
+
+.auth-divider {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text3);
+  margin: 16px 0;
+  letter-spacing: 0.05em;
+}
+
+.demo-hint {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 16px;
+  font-family: var(--font-mono);
+}
+
+.demo-hint strong { color: var(--accent); }
+
+/* ============================================================
+   APP LAYOUT
+   ============================================================ */
+#app-screen { display: none; min-height: 100vh; }
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+  width: var(--sidebar);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .3s;
+}
+
+.sidebar-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+
+.sidebar-logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), #e8c870);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(201,168,76,0.25);
+  flex-shrink: 0;
+}
+
+.sidebar-logo-text h2 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.sidebar-logo-text span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.nav-section-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text3);
+  text-transform: uppercase;
+  padding: 8px 8px 4px;
+  margin-top: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .18s;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  letter-spacing: 0.02em;
+}
+
+.nav-item:hover { background: var(--card2); color: var(--text); }
+
+.nav-item.active {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border: 1px solid rgba(201,168,76,0.2);
+}
+
+.nav-icon { font-size: 15px; flex-shrink: 0; }
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--accent);
+  color: #0a0800;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+}
+
+.sidebar-footer {
+  padding: 16px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--card2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.user-avatar {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--accent2), #7aa8e8);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.user-info { flex: 1; overflow: hidden; }
+.user-name { font-size: 13px; font-weight: 600; truncate; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: 10px; color: var(--text3); font-family: var(--font-mono); letter-spacing: 0.05em; }
+
+.btn-logout {
+  background: none; border: none;
+  color: var(--text3); cursor: pointer;
+  font-size: 14px; padding: 4px;
+  transition: color .2s;
+  flex-shrink: 0;
+}
+.btn-logout:hover { color: var(--danger); }
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+  margin-left: var(--sidebar);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  font-style: italic;
+  flex: 1;
+}
+
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn-icon {
+  width: 36px; height: 36px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--text2);
+  transition: all .18s;
+}
+
+.btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+
+.page { display: none; padding: 28px; animation: pageIn .3s ease both; }
+.page.active { display: block; }
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   DASHBOARD STATS
+   ============================================================ */
+.stats-hero {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+}
+
+.stat-card.gold::before { background: linear-gradient(90deg, var(--accent), #e8c870); }
+.stat-card.blue::before { background: linear-gradient(90deg, var(--accent2), #7aa8e8); }
+.stat-card.green::before { background: linear-gradient(90deg, var(--success), #7adfa8); }
+.stat-card.red::before { background: linear-gradient(90deg, var(--danger), #e88080); }
+
+.stat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+}
+
+.stat-number {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-card.gold .stat-number { color: var(--accent); }
+.stat-card.blue .stat-number { color: var(--accent2); }
+.stat-card.green .stat-number { color: var(--success); }
+.stat-card.red .stat-number { color: var(--danger); }
+
+.stat-sub {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+}
+
+.stat-icon {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 28px;
+  opacity: 0.12;
+}
+
+/* ============================================================
+   CHART ROW
+   ============================================================ */
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.chart-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  margin-bottom: 18px;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Donut chart */
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.donut-svg { width: 110px; height: 110px; flex-shrink: 0; }
+.donut-center { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text); }
+.donut-center-sub { font-family: var(--font-mono); font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+.donut-legend { display: flex; flex-direction: column; gap: 8px; }
+.dl-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.dl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dl-label { color: var(--text2); flex: 1; }
+.dl-val { font-family: var(--font-mono); font-size: 11px; color: var(--text); font-weight: 500; }
+
+/* Bar chart */
+.bar-list { display: flex; flex-direction: column; gap: 10px; }
+.bar-item { }
+.bar-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; }
+.bar-name { color: var(--text2); }
+.bar-pct { font-family: var(--font-mono); color: var(--text3); }
+.bar-track { background: var(--surface); border-radius: 4px; height: 6px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.16,1,.3,1); }
+
+/* Risk gauge */
+.gauge-wrap { display: flex; flex-direction: column; align-items: center; }
+.gauge-svg { width: 130px; height: 80px; }
+.gauge-val { font-family: var(--font-display); font-size: 28px; font-weight: 600; text-align: center; margin-top: 6px; }
+.gauge-label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); letter-spacing: 0.1em; text-align: center; margin-top: 2px; }
+
+/* ============================================================
+   RECENT TABLE
+   ============================================================ */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.btn-sm {
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all .18s;
+  border: 1px solid var(--border2);
+  background: var(--card2);
+  color: var(--text2);
+  font-family: var(--font-ui);
+}
+
+.btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #e8c870);
+  border: none;
+  color: #0a0800;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 4px 16px rgba(201,168,76,0.2);
+}
+
+.btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+}
+
+.data-table td {
+  padding: 11px 14px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  transition: background .15s;
+}
+
+.data-table td:first-child { border-left: 1px solid var(--border); border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.data-table td:last-child { border-right: 1px solid var(--border); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.data-table tr:hover td { background: var(--card2); }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.badge.valid { background: var(--success-glow); color: var(--success); border: 1px solid rgba(76,175,130,0.2); }
+.badge.invalid { background: var(--danger-glow); color: var(--danger); border: 1px solid rgba(224,85,85,0.2); }
+.badge.duplicate { background: rgba(224,154,53,0.1); color: var(--warn); border: 1px solid rgba(224,154,53,0.2); }
+.badge.disposable { background: var(--danger-glow); color: var(--danger); border: 1px solid rgba(224,85,85,0.2); }
+.badge.role { background: rgba(76,123,201,0.1); color: var(--accent2); border: 1px solid rgba(76,123,201,0.2); }
+
+.risk-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.risk-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+
+.risk-low .risk-dot { background: var(--success); }
+.risk-med .risk-dot { background: var(--warn); }
+.risk-high .risk-dot { background: var(--danger); }
+.risk-low { color: var(--success); }
+.risk-med { color: var(--warn); }
+.risk-high { color: var(--danger); }
+
+/* ============================================================
+   VALIDATOR PAGE
+   ============================================================ */
+.validator-layout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 20px;
+}
+
+.input-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+
+.panel-heading {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.quick-check {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.quick-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.quick-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.quick-input::placeholder { color: var(--text3); }
+
+.quick-result {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.bulk-textarea {
+  width: 100%;
+  min-height: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  resize: vertical;
+  transition: border-color .2s;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+}
+
+.bulk-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.bulk-textarea::placeholder { color: var(--text3); }
+
+.drop-zone {
+  border: 1.5px dashed var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  margin-top: 12px;
+  background: var(--surface);
+}
+
+.drop-zone:hover, .drop-zone.dragging {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.drop-icon { font-size: 24px; margin-bottom: 6px; }
+.drop-title { font-weight: 600; font-size: 13px; color: var(--accent); margin-bottom: 2px; }
+.drop-sub { font-size: 11px; color: var(--text3); }
+
+.checks-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.check-grid { display: flex; flex-direction: column; gap: 8px; }
+
+.check-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .18s;
+  user-select: none;
+}
+
+.check-row:hover { border-color: var(--border2); }
+.check-row.active { border-color: rgba(201,168,76,0.3); background: var(--accent-glow); }
+
+.check-left { display: flex; align-items: center; gap: 10px; }
+.check-emoji { font-size: 14px; }
+.check-name { font-size: 12px; font-weight: 600; }
+.check-desc { font-size: 10px; color: var(--text3); margin-top: 1px; font-family: var(--font-mono); }
+
+.toggle {
+  width: 36px; height: 20px;
+  background: var(--border2);
+  border-radius: 10px;
+  position: relative;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+
+.check-row.active .toggle { background: var(--accent); }
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform .2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.check-row.active .toggle::after { transform: translateX(16px); }
+
+.run-btn-wrap { }
+
+.btn-run {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent), #e8c870);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #0a0800;
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-run::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; bottom: 0;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left .5s;
+}
+
+.btn-run:hover::before { left: 100%; }
+.btn-run:hover { box-shadow: 0 8px 28px rgba(201,168,76,0.4); }
+.btn-run:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ============================================================
+   RESULTS PANEL
+   ============================================================ */
+.results-full {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-top: 20px;
+}
+
+.results-stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.rs-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.rs-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.rs-lbl {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.rs-box.total .rs-num { color: var(--accent2); }
+.rs-box.valid .rs-num { color: var(--success); }
+.rs-box.invalid .rs-num { color: var(--danger); }
+.rs-box.flag .rs-num { color: var(--warn); }
+.rs-box.risk .rs-num { color: var(--accent); }
+
+.progress-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 3px;
+  width: 0%;
+  transition: width .12s linear;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  letter-spacing: 0.04em;
+}
+
+.filter-chip:hover { border-color: var(--border2); color: var(--text2); }
+.filter-chip.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+.results-list {
+  max-height: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.res-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  animation: rowIn .2s ease both;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+
+.res-row:hover { border-color: var(--border2); }
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.res-email {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.res-issues { font-size: 10px; color: var(--text3); text-align: right; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.export-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-export {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: all .18s;
+  letter-spacing: 0.04em;
+}
+
+.btn-export:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 28px;
+  width: 480px;
+  max-width: 95vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: scale(.95);
+  transition: transform .2s;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+
+.modal-overlay.open .modal { transform: scale(1); }
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.modal-email {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+.modal-close {
+  background: none; border: none; color: var(--text3);
+  cursor: pointer; font-size: 18px;
+  transition: color .15s;
+  padding: 2px;
+}
+
+.modal-close:hover { color: var(--text); }
+
+.check-results { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+.cr-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.cr-icon { font-size: 14px; flex-shrink: 0; }
+.cr-name { font-size: 12px; font-weight: 600; flex: 1; }
+.cr-status { font-size: 10px; font-family: var(--font-mono); font-weight: 600; }
+.cr-item.pass .cr-status { color: var(--success); }
+.cr-item.fail .cr-status { color: var(--danger); }
+.cr-item.warn .cr-status { color: var(--warn); }
+.cr-item.info .cr-status { color: var(--accent2); }
+.cr-item.skip .cr-status { color: var(--text3); }
+
+.risk-bar-wrap { }
+.risk-bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.risk-bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.risk-bar-fill { height: 100%; border-radius: 4px; transition: width .8s cubic-bezier(.16,1,.3,1); }
+
+/* ============================================================
+   HISTORY PAGE
+   ============================================================ */
+.history-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  max-width: 280px;
+  transition: border-color .2s;
+}
+
+.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color: var(--text3); }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text3);
+}
+
+.empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+.empty-title { font-family: var(--font-display); font-size: 20px; font-style: italic; color: var(--text2); margin-bottom: 6px; }
+.empty-sub { font-size: 13px; color: var(--text3); }
+
+/* ============================================================
+   SETTINGS PAGE
+   ============================================================ */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.settings-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.settings-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.setting-row:last-child { border-bottom: none; }
+.setting-name { font-size: 13px; }
+.setting-desc { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+.notif {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 13px;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  animation: notifIn .3s ease both;
+  display: flex; align-items: center; gap: 10px;
+  max-width: 320px;
+}
+
+@keyframes notifIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+.notif.success { border-left: 3px solid var(--success); }
+.notif.error { border-left: 3px solid var(--danger); }
+.notif.info { border-left: 3px solid var(--accent); }
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.mono { font-family: var(--font-mono); }
+.text-muted { color: var(--text3); }
+.text-accent { color: var(--accent); }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-2 { gap: 8px; }
+.mt-4 { margin-top: 16px; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .stats-hero { grid-template-columns: repeat(2, 1fr); }
+  .chart-row { grid-template-columns: 1fr 1fr; }
+  .validator-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  :root { --sidebar: 0px; }
+  .sidebar { transform: translateX(-240px); }
+  .sidebar.open { transform: translateX(0); width: 240px; }
+  .main-content { margin-left: 0; }
+  .stats-hero { grid-template-columns: 1fr 1fr; }
+  .chart-row { grid-template-columns: 1fr; }
+  .results-stats-row { grid-template-columns: repeat(3, 1fr); }
+  .settings-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">✉</div>
-  <h1>MAILCHECK PRO</h1>
-  <span>Bulk Email Validator v1.0</span>
-</header>
+<!-- ============================================================
+     AUTH SCREEN
+     ============================================================ -->
+<div id="auth-screen">
+  <div class="auth-bg"></div>
+  <div class="auth-grid"></div>
 
-<div class="main">
-  <div style="display:flex;flex-direction:column;gap:20px;">
-    <div class="panel">
-      <div class="lbl">📋 Paste Emails</div>
-      <textarea id="ei" placeholder="One per line or comma-separated:&#10;&#10;alice@example.com&#10;bob@gmail.com&#10;invalid-email&#10;test@tempmail.com&#10;alice@example.com"></textarea>
-      <div class="drop" id="dz" onclick="document.getElementById('fi').click()">
-        <div class="di">📁</div>
-        <strong>Upload .txt or .csv</strong>
-        <p>Click to browse or drag &amp; drop</p>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">✉</div>
+      <div>
+        <h1>MailCheck Pro</h1>
+        <span>Enterprise Email Validation</span>
       </div>
-      <input type="file" id="fi" accept=".txt,.csv"/>
     </div>
 
-    <div class="panel">
-      <div class="lbl">⚙️ Validation Checks</div>
-      <div class="cg">
-        <div class="ci active" data-c="format" onclick="tc(this)"><div class="dot">✓</div><div><span>Format / Syntax</span><small>RFC 5322 compliance</small></div></div>
-        <div class="ci active" data-c="domain" onclick="tc(this)"><div class="dot">✓</div><div><span>Domain Check</span><small>Valid TLD &amp; structure</small></div></div>
-        <div class="ci active" data-c="disposable" onclick="tc(this)"><div class="dot">✓</div><div><span>Disposable Detection</span><small>Temp/throwaway emails</small></div></div>
-        <div class="ci active" data-c="duplicate" onclick="tc(this)"><div class="dot">✓</div><div><span>Duplicate Detection</span><small>Flag repeated entries</small></div></div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuth('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuth('register')">Register</button>
+    </div>
+
+    <div id="login-form">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="login-email" type="email" placeholder="you@example.com" value="demo@mailcheck.pro"/>
       </div>
-      <button class="btn btn-p" id="rb" onclick="run()">▶ RUN VALIDATION</button>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-pass" type="password" placeholder="••••••••" value="demo1234"/>
+      </div>
+      <button class="btn-auth" onclick="doLogin()">Sign In to Dashboard</button>
     </div>
-  </div>
 
-  <div class="panel" style="display:flex;flex-direction:column;">
-    <div class="lbl">📊 Results</div>
-    <div class="sr">
-      <div class="sb tot"><div class="n" id="st">0</div><div class="l">Total</div></div>
-      <div class="sb valid"><div class="n" id="sv">0</div><div class="l">Valid</div></div>
-      <div class="sb inv"><div class="n" id="si">0</div><div class="l">Invalid</div></div>
-      <div class="sb warn"><div class="n" id="sw">0</div><div class="l">Flagged</div></div>
+    <div id="register-form" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="reg-name" type="text" placeholder="Jane Doe"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="reg-email" type="email" placeholder="you@company.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="reg-pass" type="password" placeholder="Min. 8 characters"/>
+      </div>
+      <button class="btn-auth" onclick="doRegister()">Create Account</button>
     </div>
-    <div class="pb" id="pb"><div class="pf" id="pf"></div></div>
-    <div class="fr">
-      <button class="fb active" onclick="sf('all',this)">All</button>
-      <button class="fb" onclick="sf('valid',this)">✅ Valid</button>
-      <button class="fb" onclick="sf('invalid',this)">❌ Invalid</button>
-      <button class="fb" onclick="sf('duplicate',this)">⚠️ Duplicate</button>
-      <button class="fb" onclick="sf('disposable',this)">🚫 Disposable</button>
-    </div>
-    <div class="rl" id="rl">
-      <div class="empty"><div class="ic">📭</div><p>Paste emails and click<br><strong style="color:var(--accent)">RUN VALIDATION</strong></p></div>
-    </div>
-    <div class="er" id="er" style="display:none;">
-      <button class="es" onclick="xCSV()">⬇ Export CSV</button>
-      <button class="es" onclick="xJSON()">⬇ Export JSON</button>
+
+    <div class="auth-divider">— or use demo account —</div>
+    <div class="demo-hint">
+      Email: <strong>demo@mailcheck.pro</strong><br/>
+      Password: <strong>demo1234</strong>
     </div>
   </div>
 </div>
 
+<!-- ============================================================
+     APP SCREEN
+     ============================================================ -->
+<div id="app-screen">
+  <div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">✉</div>
+        <div class="sidebar-logo-text">
+          <h2>MailCheck</h2>
+          <span>Pro v2.0</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+        <button class="nav-item active" onclick="showPage('dashboard', this)">
+          <span class="nav-icon">◈</span> Dashboard
+        </button>
+        <button class="nav-item" onclick="showPage('validator', this)">
+          <span class="nav-icon">⚡</span> Bulk Validator
+          <span class="nav-badge" id="queue-badge" style="display:none">0</span>
+        </button>
+        <button class="nav-item" onclick="showPage('history', this)">
+          <span class="nav-icon">◷</span> History
+        </button>
+
+        <div class="nav-section-label">Tools</div>
+        <button class="nav-item" onclick="showPage('analytics', this)">
+          <span class="nav-icon">◎</span> Analytics
+        </button>
+        <button class="nav-item" onclick="showPage('settings', this)">
+          <span class="nav-icon">◉</span> Settings
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="user-avatar">D</div>
+          <div class="user-info">
+            <div class="user-name" id="user-name-display">Demo User</div>
+            <div class="user-role">Pro Plan</div>
+          </div>
+          <button class="btn-logout" onclick="doLogout()" title="Sign out">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div class="topbar-actions">
+          <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme" id="theme-btn">🌙</button>
+          <button class="btn-icon" title="Keyboard shortcuts" onclick="showShortcuts()">⌨</button>
+          <button class="btn-icon" title="Notifications">🔔</button>
+        </div>
+      </header>
+
+      <!-- ======= DASHBOARD PAGE ======= -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-hero">
+          <div class="stat-card gold">
+            <div class="stat-icon">✉</div>
+            <div class="stat-label">Total Validated</div>
+            <div class="stat-number" id="dash-total">0</div>
+            <div class="stat-sub">all-time</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">✓</div>
+            <div class="stat-label">Valid Rate</div>
+            <div class="stat-number" id="dash-valid-pct">—</div>
+            <div class="stat-sub">average quality</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-icon">✗</div>
+            <div class="stat-label">Invalid Found</div>
+            <div class="stat-number" id="dash-invalid">0</div>
+            <div class="stat-sub">blocked</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon">⚠</div>
+            <div class="stat-label">Flagged</div>
+            <div class="stat-number" id="dash-flagged">0</div>
+            <div class="stat-sub">disposable + role</div>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <!-- Donut chart -->
+          <div class="chart-card">
+            <div class="chart-title">📊 Result Breakdown</div>
+            <div class="donut-wrap">
+              <div style="position:relative;flex-shrink:0;">
+                <svg class="donut-svg" viewBox="0 0 110 110" id="donut-svg">
+                  <circle cx="55" cy="55" r="40" fill="none" stroke="#1f2840" stroke-width="12"/>
+                  <circle id="d-valid" cx="55" cy="55" r="40" fill="none" stroke="#4caf82" stroke-width="12"
+                    stroke-dasharray="0 251.2" stroke-dashoffset="62.8" stroke-linecap="round" style="transition:stroke-dasharray 1s cubic-bezier(.16,1,.3,1)"/>
+                  <circle id="d-invalid" cx="55" cy="55" r="40" fill="none" stroke="#e05555" stroke-width="12"
+                    stroke-dasharray="0 251.2" stroke-dashoffset="62.8" stroke-linecap="round" style="transition:stroke-dasharray 1s cubic-bezier(.16,1,.3,1)"/>
+                  <circle id="d-flagged" cx="55" cy="55" r="40" fill="none" stroke="#e09a35" stroke-width="12"
+                    stroke-dasharray="0 251.2" stroke-dashoffset="62.8" stroke-linecap="round" style="transition:stroke-dasharray 1s cubic-bezier(.16,1,.3,1)"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+                  <div class="donut-center" id="donut-pct">—</div>
+                  <div class="donut-center-sub">Valid</div>
+                </div>
+              </div>
+              <div class="donut-legend">
+                <div class="dl-item"><div class="dl-dot" style="background:#4caf82"></div><span class="dl-label">Valid</span><span class="dl-val" id="dl-valid">0</span></div>
+                <div class="dl-item"><div class="dl-dot" style="background:#e05555"></div><span class="dl-label">Invalid</span><span class="dl-val" id="dl-invalid">0</span></div>
+                <div class="dl-item"><div class="dl-dot" style="background:#e09a35"></div><span class="dl-label">Flagged</span><span class="dl-val" id="dl-flagged">0</span></div>
+                <div class="dl-item"><div class="dl-dot" style="background:#4c7bc9"></div><span class="dl-label">Duplicate</span><span class="dl-val" id="dl-dup">0</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bar chart -->
+          <div class="chart-card">
+            <div class="chart-title">🔍 Issue Breakdown</div>
+            <div class="bar-list" id="bar-chart">
+              <div class="empty-state" style="padding:20px 0;">
+                <div class="empty-icon" style="font-size:24px">📭</div>
+                <div style="font-size:12px;color:var(--text3)">Run a validation to see breakdown</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk gauge -->
+          <div class="chart-card">
+            <div class="chart-title">⚠ Average Risk Score</div>
+            <div class="gauge-wrap">
+              <svg class="gauge-svg" viewBox="0 0 130 80">
+                <path d="M 15 70 A 50 50 0 0 1 115 70" fill="none" stroke="#1f2840" stroke-width="10" stroke-linecap="round"/>
+                <path id="gauge-path" d="M 15 70 A 50 50 0 0 1 115 70" fill="none" stroke="#4caf82" stroke-width="10" stroke-linecap="round"
+                  stroke-dasharray="157 157" stroke-dashoffset="157" style="transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1)"/>
+              </svg>
+              <div class="gauge-val" id="gauge-val">—</div>
+              <div class="gauge-label">Risk Score / 100</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center;" id="gauge-label-text">No data yet</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">Recent Validations</div>
+          <button class="btn-sm" onclick="showPage('history', document.querySelector('.nav-item:nth-child(3)'))">View All →</button>
+        </div>
+
+        <div id="recent-table-wrap">
+          <div class="empty-state">
+            <div class="empty-icon">📬</div>
+            <div class="empty-title">No validations yet</div>
+            <div class="empty-sub">Head to the Bulk Validator to get started</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======= VALIDATOR PAGE ======= -->
+      <div class="page" id="page-validator">
+        <div class="validator-layout">
+          <div>
+            <div class="input-panel">
+              <div class="panel-heading">⚡ Quick Single Check</div>
+              <div class="quick-check">
+                <input class="quick-input" id="quick-email" type="email" placeholder="test@example.com — press Enter to validate"/>
+                <button class="btn-sm" onclick="quickCheck()">Check</button>
+              </div>
+              <div class="quick-result" id="quick-result"></div>
+
+              <div class="panel-heading">📋 Bulk Input</div>
+              <textarea class="bulk-textarea" id="bulk-input"
+                placeholder="Paste emails here — one per line or comma/semicolon separated:&#10;&#10;alice@example.com&#10;bob@company.org&#10;invalid-email&#10;test@tempmail.com&#10;admin@domain.com"></textarea>
+
+              <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-upload').click()">
+                <div class="drop-icon">📁</div>
+                <div class="drop-title">Upload File</div>
+                <div class="drop-sub">Supports .txt and .csv — drag & drop or click to browse</div>
+              </div>
+              <input type="file" id="file-upload" accept=".txt,.csv" style="display:none"/>
+            </div>
+          </div>
+
+          <div class="checks-panel">
+            <div class="panel-heading">⚙ Validation Rules</div>
+            <div class="check-grid" id="check-grid">
+              <!-- populated by JS -->
+            </div>
+            <div style="margin-top:4px;">
+              <button class="btn-run" id="run-btn" onclick="runBulk()">▶ Run Validation</button>
+            </div>
+            <div style="margin-top:12px;padding:12px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border);">
+              <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Shortcuts</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.8;">
+                <span style="color:var(--accent);font-family:var(--font-mono);">Ctrl+Enter</span> Run · 
+                <span style="color:var(--accent);font-family:var(--font-mono);">Ctrl+L</span> Clear · 
+                <span style="color:var(--accent);font-family:var(--font-mono);">Ctrl+C</span> Copy Valid
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results-full" id="results-section" style="display:none;">
+          <div class="panel-heading">📊 Validation Results</div>
+          <div class="results-stats-row">
+            <div class="rs-box total"><div class="rs-num" id="rs-total">0</div><div class="rs-lbl">Total</div></div>
+            <div class="rs-box valid"><div class="rs-num" id="rs-valid">0</div><div class="rs-lbl">Valid</div></div>
+            <div class="rs-box invalid"><div class="rs-num" id="rs-invalid">0</div><div class="rs-lbl">Invalid</div></div>
+            <div class="rs-box flag"><div class="rs-num" id="rs-flagged">0</div><div class="rs-lbl">Flagged</div></div>
+            <div class="rs-box risk"><div class="rs-num" id="rs-risk">—</div><div class="rs-lbl">Avg Risk</div></div>
+          </div>
+
+          <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+
+          <div class="filter-bar">
+            <button class="filter-chip active" onclick="filterResults('all',this)">All</button>
+            <button class="filter-chip" onclick="filterResults('valid',this)">✅ Valid</button>
+            <button class="filter-chip" onclick="filterResults('invalid',this)">❌ Invalid</button>
+            <button class="filter-chip" onclick="filterResults('duplicate',this)">🔁 Duplicate</button>
+            <button class="filter-chip" onclick="filterResults('disposable',this)">🚫 Disposable</button>
+            <button class="filter-chip" onclick="filterResults('role',this)">👤 Role-Based</button>
+          </div>
+
+          <div class="results-list" id="results-list"></div>
+
+          <div class="export-row">
+            <button class="btn-export" onclick="exportData('csv')">⬇ Export CSV</button>
+            <button class="btn-export" onclick="exportData('json')">⬇ Export JSON</button>
+            <button class="btn-export" onclick="copyValid()">📋 Copy Valid Emails</button>
+            <button class="btn-export" onclick="exportData('txt')">⬇ Valid Only .txt</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======= HISTORY PAGE ======= -->
+      <div class="page" id="page-history">
+        <div class="history-filters">
+          <input class="search-input" placeholder="🔍  Search runs..." id="history-search" oninput="renderHistory()"/>
+          <button class="btn-sm" onclick="clearHistory()">Clear All</button>
+        </div>
+        <div id="history-list"></div>
+      </div>
+
+      <!-- ======= ANALYTICS PAGE ======= -->
+      <div class="page" id="page-analytics">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="chart-card">
+            <div class="chart-title">📈 Validation Quality Over Time</div>
+            <div id="timeline-chart" style="height:140px;display:flex;align-items:flex-end;gap:6px;padding-top:10px;">
+              <div class="empty-state" style="width:100%;padding:20px 0;">
+                <div style="font-size:12px;color:var(--text3)">Run validations to see trends</div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">🌐 Top Domains Validated</div>
+            <div class="bar-list" id="domain-chart">
+              <div class="empty-state" style="padding:20px 0;"><div style="font-size:12px;color:var(--text3)">No data yet</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">🚫 Disposable Providers Detected</div>
+            <div class="bar-list" id="disp-chart">
+              <div class="empty-state" style="padding:20px 0;"><div style="font-size:12px;color:var(--text3)">No data yet</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">⚠ Most Common Issues</div>
+            <div class="bar-list" id="issues-chart">
+              <div class="empty-state" style="padding:20px 0;"><div style="font-size:12px;color:var(--text3)">No data yet</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======= SETTINGS PAGE ======= -->
+      <div class="page" id="page-settings">
+        <div class="settings-grid">
+          <div class="settings-card">
+            <div class="settings-title">🎨 Appearance</div>
+            <div class="setting-row">
+              <div><div class="setting-name">Dark Mode</div><div class="setting-desc">Switch between dark and light theme</div></div>
+              <button class="btn-sm" onclick="toggleTheme()" id="theme-toggle-btn">Toggle</button>
+            </div>
+            <div class="setting-row">
+              <div><div class="setting-name">Compact Results</div><div class="setting-desc">Show more rows in results list</div></div>
+              <button class="btn-sm" onclick="notify('Saved!','success')">Save</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-title">🔒 Account</div>
+            <div class="setting-row">
+              <div><div class="setting-name" id="settings-user-name">Demo User</div><div class="setting-desc" id="settings-user-email">demo@mailcheck.pro</div></div>
+              <span class="badge valid">Pro</span>
+            </div>
+            <div class="setting-row">
+              <div><div class="setting-name">Sign Out</div><div class="setting-desc">End your current session</div></div>
+              <button class="btn-sm" onclick="doLogout()">Sign Out</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-title">⚙ Validation Defaults</div>
+            <div id="settings-checks"></div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-title">📦 Data & Privacy</div>
+            <div class="setting-row">
+              <div><div class="setting-name">Validation History</div><div class="setting-desc">Stored locally in your browser</div></div>
+              <button class="btn-sm" onclick="clearHistory();notify('History cleared','success')">Clear</button>
+            </div>
+            <div class="setting-row">
+              <div><div class="setting-name">Export All Data</div><div class="setting-desc">Download complete history as JSON</div></div>
+              <button class="btn-sm" onclick="exportAllHistory()">Export</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main-content -->
+  </div><!-- /app-layout -->
+</div><!-- /app-screen -->
+
+<!-- EMAIL DETAIL MODAL -->
+<div class="modal-overlay" id="detail-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Email Analysis</div>
+        <div class="modal-email" id="modal-email-text"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="check-results" id="modal-checks"></div>
+    <div class="risk-bar-wrap">
+      <div class="risk-bar-label">
+        <span style="font-size:12px;font-weight:600;">Risk Score</span>
+        <span class="mono" id="modal-risk-val" style="font-size:13px;font-weight:600;"></span>
+      </div>
+      <div class="risk-bar-track">
+        <div class="risk-bar-fill" id="modal-risk-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT ENGINE
+     ============================================================ -->
 <script>
-const DISP=new Set(['tempmail.com','mailinator.com','guerrillamail.com','10minutemail.com','throwam.com','yopmail.com','trashmail.com','fakeinbox.com','maildrop.cc','sharklasers.com','guerrillamail.info','spam4.me','dispostable.com','mailnull.com','spamgourmet.com','trashmail.at','trashmail.io','discard.email','mytrashmail.com','mailscrap.com','getnada.com','spamex.com','mail.tm','getairmail.com','moakt.com','tempr.email','33mail.com','spamhereplease.com','binkmail.com','bob.email','clrmail.com','cock.li','fakemail.net','filzmail.com','meltmail.com','nwytg.com','safetymail.info','spambox.us','tempemail.net','tempinbox.com','throwablemail.com','wegwerfmail.de','zetmail.com','crazymailing.com','deadaddress.com','emailondeck.com','incognitomail.com','jetable.fr.nf','jourrapide.com','kasmail.com','mail-temporaire.fr','mt2015.com','mt2016.com','objectmail.com','oneoffmail.com','pookmail.com','privymail.de','rppkn.com','spamavert.com','trbvm.com','trdermail.com']);
-let res=[],ac=new Set(['format','domain','disposable','duplicate']),cf='all';
+'use strict';
 
-function tc(el){const c=el.dataset.c;el.classList.toggle('active');ac.has(c)?ac.delete(c):ac.add(c);}
+/* ============================================================
+   DISPOSABLE DOMAIN LIST (500+)
+   ============================================================ */
+const DISPOSABLE = new Set([
+  'tempmail.com','mailinator.com','guerrillamail.com','10minutemail.com','throwam.com',
+  'yopmail.com','trashmail.com','fakeinbox.com','maildrop.cc','sharklasers.com',
+  'guerrillamail.info','spam4.me','dispostable.com','mailnull.com','spamgourmet.com',
+  'trashmail.at','trashmail.io','discard.email','mytrashmail.com','mailscrap.com',
+  'getnada.com','spamex.com','mail.tm','getairmail.com','moakt.com','tempr.email',
+  '33mail.com','binkmail.com','bob.email','clrmail.com','cock.li','fakemail.net',
+  'filzmail.com','meltmail.com','nwytg.com','safetymail.info','spambox.us',
+  'tempemail.net','tempinbox.com','throwablemail.com','wegwerfmail.de','zetmail.com',
+  'crazymailing.com','deadaddress.com','emailondeck.com','incognitomail.com',
+  'jetable.fr.nf','jourrapide.com','meltmail.com','mt2015.com','mt2016.com',
+  'objectmail.com','oneoffmail.com','pookmail.com','privymail.de','rppkn.com',
+  'spamavert.com','trbvm.com','trdermail.com','mintemail.com','owlpic.com',
+  'discardmail.com','discardmail.de','spamgob.com','mailfreeonline.com',
+  'trashmail.me','trashmail.net','yomailbox.com','e4ward.com','mailpoof.com',
+  'spamfree24.org','tempemail.com','throwam.com','shieldedmail.com',
+  'klzlk.com','lol.ovpn.to','spamhereplease.com','h8s.org','dcctb.com',
+  'fakedemail.com','trashmail.fr','0-mail.com','0815.ru','0wnd.net',
+  '0wnd.org','10minutemail.net','20minutemail.com','2prong.com','30minutemail.com',
+  '3d-painting.com','4warding.com','9ox.net','a-bc.net','abyssmail.com',
+  'acmil.com','acu.at','ad.homtail.com','adresi.net','aelo.com','afjdj.com',
+  'agustaa.top','ahem.email','ahk.jp','alivance.com','allmail.net','alph.wtf',
+  'anonymbox.com','antichef.com','antichef.net','antireg.com','antispam.de',
+  'antispam24.de','antispammail.de','armyspy.com','artman-conception.com',
+  'azmeil.tk','baxomale.ht.cx','beddly.com','beefmilk.com','bigprofessor.so',
+  'binkmail.com','bio-muesli.net','bladesmail.net','bloatbox.com','blogmyway.org',
+  'blurbermail.com','bofthew.com','boxtemp.com.br','breakthru.com','brefmail.com',
+  'brennendesreich.de','bspamfree.org','bugmenot.com','bumpymail.com','bund.us',
+  'burnthespam.info','bvhrk.com','byom.de','c2.hu','cachedot.net','card.zp.ua',
+  'casualdx.com','cek.pm','centermail.com','centermail.net','chammy.info',
+  'chewiemail.com','chogmail.com','choicemail1.com','cincincinatibengals.com',
+  'clixser.com','cmail.club','cmail.com','cmail.net','cmail.org','coieo.com',
+  'coldemail.info','cool.fr.nf','correo.blogos.net','cosmorph.com',
+  'courriel.fr.nf','courrieltemporaire.com','crapmail.org','crazespam.com',
+  'cubiclink.com','curryworld.de','cust.in','dacoolest.com','daemsteam.com',
+  'dandikmail.com','dayrep.com','dcemail.com','deadaddress.com','deadletter.ga',
+  'delikkt.de','despam.it','despammed.com','devnullmail.com','dfgh.net',
+  'digitalsanctuary.com','dingbone.com','dirtracers.com','discard.email',
+  'discardmail.com','discardmail.de','disposableinbox.com','dispose.it',
+  'disposemail.com','dispostable.com','dodgeit.com','dodgemail.de','dodgit.com',
+  'dontreg.com','dontsendmespam.de','dontusethis.email','drdrb.net','drivetagdev.com',
+  'droolingfanboy.de','dumpmail.de','dumpyemail.com','duskmail.com','e-mail.com',
+  'e-mail.org','e.arno.fi','e4ward.com','easytrashmail.com','etranquil.com',
+  'einrot.com','eintagsmail.de','elearningjournal.org','email-fake.com',
+  'email-jetable.fr','email.net','emailias.com','emailinfive.com','emailsensei.com',
+  'emailtemporal.org','emailtemporar.ro','emailthe.net','emailtmp.com',
+  'emailwarden.com','emailx.at.hm','emailxfer.com','emkei.cz','eml.pp.ua',
+  'emlpro.com','emltmp.com','enterto.com','ephemail.net','etranquil.com',
+  'evopo.com','explodemail.com','express.net.ua','extremail.ru','eyepaste.com',
+  'fake-box.com','fake-email.pp.ua','fakeinformation.com','fansworldwide.de',
+  'farifluset.mailexpire.com','fast-email.com','fast-mail.fr','fastem.com',
+  'fastemail.in','fastemailer.com','fastemails.us','fastmail.cn','fastmazda.com',
+  'fastmessaging.com','fastsfwmail.me','fastwebnet.it','faux.name','fd-fp3.com',
+  'fdcserver.net','fivemail.de','fixmail.tk','fizmail.com','fleckens.hu',
+  'flittermail.com','flopmail.com','flurred.com','flyspam.com','flytemp.mooo.com',
+  'footard.com','frapmail.com','freeinbox.email','freeletter.me','freemail.ms',
+  'freundin.ru','frontflip.us','ftp.sh','fullangle.de','fux0ringduh.com',
+  'fxnxs.com','fyii.de','garliclife.com','gbmail.top','gehensiemirnichtaufdensack.de',
+  'gelitik.in','gero.us','geschent.biz','get-mail.cf','get-mail.ga',
+  'get-mail.ml','get-mail.tk','getairmail.com','getjunk.email','getmails.eu',
+  'getnowtoday.cf','gfmail.cf','giantmail.de','girlsundertheinfluence.com',
+  'giveh2o.info','glitch.sx','globaltrans.email','go2usa.info','goodsearch.com',
+  'gorillaswithdirtyarmpits.com','goplaygame.ru','gothere.biz','gothere.uk.com',
+  'gotti.otherinbox.com','gricmail.com','grr.la','gsrv.co.uk','guerillamail.biz',
+  'guerillamail.de','guerillamail.net','guerillamail.org','guerillamail.com',
+  'guerrillamail.biz','guerrillamail.de','guerrillamail.net','guerrillamail.org',
+  'guerrillamailblock.com','gustr.com','h.mintemail.com','h8s.org',
+  'habitbuster.com','hailmail.net','hat-geld.de','hellodream.mobi',
+  'herp.in','hidzz.com','highbros.org','hmail.us','hopemail.biz','hostingarena.com',
+  'hotpop.com','hpc.tw','hulapla.de','humaility.com','hurify1.com',
+  'ieatspam.eu','ieatspam.info','ieh-mail.de','ignoremail.com','ihateyoualot.info',
+  'iheartspam.org','ikbenspamvrij.nl','imails.info','inbax.tk','inbox.si',
+  'inboxalias.com','inboxclean.com','inboxclean.org','incognitomail.com',
+  'incognitomail.net','incognitomail.org','ineednewemailnow.com','inoutmail.de',
+  'insorg.org','internet-e-mail.de','internet-mail.org','iozak.com','ipoo.org',
+  'irish2me.com','iroid.com','is.af','isosq.com','it7.ovh','itcompu.com',
+  'itmail.eu','itrashmail.com','jafps.com','jajxz.com','jakuza.hu',
+  'jdmadventures.com','jdz.ro','jet-renovation.fr','jetable.com','jetable.email',
+  'jetable.fr.nf','jetable.net','jetable.org','jnxjn.com','jnxjn.de',
+  'joliemere.fr','jonathandesouzadesigns.com','junk1.tk','junkmail.com',
+  'junkmail.ga','junkmail.gq','junkmail.gr','junkmail.info','justbegone.com',
+  'kasmail.com','kaspop.com','kbox.li','keepmymail.com','killmail.com',
+  'killmail.net','kimsdisk.com','kir.ch.tc','klassmaster.com','klzlk.com',
+  'kook.ml','kosmetik-obatkuat.com','koszmail.pl','kurzepost.de','kwift.net',
+  'l33r.eu','lackmail.net','landmail.net','lastmail.co','lazyinbox.com',
+  'letmeinonthis.com','letthemeatspam.com','limemail.net','link2mail.net',
+  'litedrop.com','llammail.net','lol.ovpn.to','lookugly.com','lopl.co.cc',
+  'lortemail.dk','losemymail.com','lovemeleaveme.com','luckymail.org',
+  'lyfestylecooker.com','m4ilweb.info','maboard.com','mail-filter.com',
+  'mail-temporaire.fr','mail-tester.com','mail.mezimages.net','mail2rss.org',
+  'mail333.com','mailbidon.com','mailblocks.com','mailbuckz.com','mailcat.biz',
+  'mailchop.com','mailde.ovh','mailexpire.com','mailfirst.com','mailforspam.com',
+  'mailfreeonline.com','mailfs.com','mailguard.me','mailhazard.com','mailhz.me',
+  'mailimails.com','mailimate.com','mailinatar.org','mailincubator.com',
+  'mailisent.com','mailismagic.com','mailmetrash.com','mailmoat.com','mailnew.com',
+  'mailnull.com','mailpoof.com','mailquack.com','mailseal.de','mailshell.com',
+  'mailsiphon.com','mailslite.com','mailslot.com','mailsnull.com','mailspam.me',
+  'mailspam.xyz','mailstart.com','mailstartplus.com','mailsuckers.com',
+  'mailtemp.info','mailtome.de','mailtoyou.top','mailtrash.net','mailtrv.com',
+  'mailzilla.com','mailzilla.org','makemetheking.com','malahov.de','malinator.com',
+  'manybrain.com','mbx.cc','mega.zik.dj','meltmail.com','merry.pink',
+  'messagebeamer.de','mierdamail.com','migmail.pl','migumail.com','mindless.com',
+  'mintemail.com','misterpinball.de','mjukglass.nu','mobi.web.id','moncourrier.fr.nf',
+  'monemail.fr.nf','monmail.fr.nf','moot.es','mox.pp.ua','mr24.cc','mt2014.com',
+  'mt2015.com','mt2016.com','mxfuel.com','my10minutemail.com','mypartyclip.de',
+  'myphantomemail.com','myspaceinc.com','myspaceinc.net','myspaceinc.org',
+  'myspamless.com','mytemp.email','mytempemail.com','mytempmail.com',
+  'mytrashmail.com','nabuma.com','nada.email','nada.ltd','nadeem.ml',
+  'nastypenguins.com','nativestar.net','nbox.notif.me','neko2.net','netmails.com',
+  'netmails.net','netzidiot.de','newairmail.com','nextmail.ru','noclickemail.com',
+  'nogmailspam.info','nomail.pw','nomail.xl.cx','nospam.ze.tc','nospamfor.us',
+  'nospammail.net','nospamthanks.info','notmailinator.com','notrnailinator.com',
+  'now.im','ntlworld.tv','null.net','nwldx.com','objectmail.com','odaymail.com',
+  'oe1i6a.jbnfn.ml','olypmacall.com','onewaymail.com','online.ms',
+  'oopi.org','or.bet','ora7.com','ordinaryamerican.net','otherinbox.com',
+  'outlawspam.com','ovpn.to','owlpic.com','ownmail.net','ozbytes.net.au',
+  'ozzymum.com','paplease.com','parlimentpetitioner.tk','pattermail.com',
+  'pay-mon.com','pepbot.com','pemail.net','pepemail.com','pezeshkpour.com',
+  'pfui.ru','phreaker.net','pierpan.com','pimpedupmyspace.com','pjjkp.com',
+  'plexolan.de','poczta.onet.pl','politikerclub.de','poofy.org','pookmail.com',
+  'postonline.me','postshift.ru','privacy.net','proxymail.eu','proxyparking.com',
+  'prtnx.com','prtz.eu','punkass.com','putthisinyourspamdatabase.com',
+  'pwrby.com','q2labz.com','qisdo.com','qisoa.com','qoika.com',
+  'qq.com','quickinbox.com','r4nd0m.de','raakim.com','raetp9.com',
+  'razemail.com','recode.me','recursor.net','recyclemail.dk','regbypass.com',
+  'regbypass.comsafe-mail.net','rejectmail.com','rklips.com','rmqkr.net',
+  'rnailinator.com','roundclean.com','rppkn.com','rq6668f.com','rtrtr.com',
+  's0ny.net','safe-mail.net','safetymail.info','safetypost.de','sandelf.de',
+  'sanstr.com','sapo.pt','saynotospams.com','schafmail.de','sco.lt',
+  'scrag.net','secure-mail.biz','semail.us','sendspamhere.com',
+  'senseless-entertainment.com','sharklasers.com','shieldedmail.com','shhmail.com',
+  'shiftmail.com','shitmail.me','shitmail.org','shitware.nl','shmeriously.com',
+  'shortmail.net','sify.com','simpleitsecurity.info','sinspawn.net',
+  'skeefmail.com','slapsfromlastnight.com','slaskpost.se','slmfight.com',
+  'slo.net','slopsbox.com','smapfree24.com','smapfree24.de','smapfree24.net',
+  'smapfree24.org','smellfear.com','smtp99.com','snakemail.com','sneakemail.com',
+  'sneakmail.de','sofimail.com','sofort-mail.de','sogetthis.com','sohai.ml',
+  'sohu.com','soike.com','solvemail.info','soodonims.com','sopassword.com',
+  'spam.la','spam.mn','spam.org.tr','spam.su','spam4.me','spamail.de',
+  'spamarrest.com','spambob.com','spambob.net','spambob.org','spambog.com',
+  'spambog.de','spambog.ru','spambox.info','spambox.irishspringrealty.com',
+  'spambox.me','spambox.org','spambox.us','spambox.win','spamcannon.com',
+  'spamcannon.net','spamcero.com','spamcon.org','spamcorptastic.com',
+  'spamcowboy.com','spamcowboy.net','spamcowboy.org','spamday.com',
+  'spamdecoy.net','spamex.com','spamfree.eu','spamfree24.de','spamfree24.eu',
+  'spamfree24.info','spamfree24.net','spamfree24.org','spamgob.com',
+  'spamgoes.in','spamgourmet.com','spamgourmet.net','spamgourmet.org',
+  'spamgrave.com','spamherelots.com','spamhereplease.com','spamhole.com',
+  'spamify.com','spaminator.de','spamkill.info','spaml.com','spaml.de',
+  'spammish.com','spammotel.com','spammy.host','spamnot.com','spamoff.de',
+  'spamspot.com','spamstack.net','spamthis.co.uk','spamthisplease.com',
+  'spamtrail.com','spamtroll.net','speed.1s.fr','spikio.com','spoofmail.de',
+  'squizzy.de','ssoia.com','standart.name','stinkefinger.net','stockmail.net',
+  'stopspam.app','stuffmail.de','super-auswahl.de','supergreatmail.com',
+  'supermailer.jp','superrito.com','superstachel.de','suremail.info',
+  'svk.jp','sweetxxx.de','tafmail.com','tagyourself.com','tapchicongnghe.org',
+  'teewars.org','teleworm.com','teleworm.us','temp-mail.com','temp-mail.de',
+  'temp-mail.net','temp-mail.org','temp-mail.ru','temp.emeraldwebmail.com',
+  'temp.headstrong.de','tempalias.com','tempe-mail.com','tempail.com',
+  'tempe.com','tempemail.biz','tempemail.co.za','tempemail.net','tempemail.us',
+  'tempinbox.co.uk','tempinbox.com','tempmail.de','tempmail.eu','tempmail.it',
+  'tempmailer.com','tempmailer.de','tempomail.fr','temporalmail.com',
+  'temporaryemail.net','temporaryemail.us','temporaryforwarding.com',
+  'temporaryinbox.com','temporarymail.org','tempsky.com','tempthe.net',
+  'tempymail.com','thankyou2010.com','thc.st','thelimestones.com',
+  'thisisnotmyrealemail.com','thismail.net','throwam.com','throwaway.email',
+  'tittbit.in','tizi.com','tjohoo.se','tmailinator.com','toiea.com',
+  'tokem.co','tokuriders.club','top-mailer.net','toprubli.online',
+  'totobet.net','tradermail.info','trash-mail.at','trash-mail.cf',
+  'trash-mail.com','trash-mail.ga','trash-mail.gq','trash-mail.io',
+  'trash-mail.ml','trash-mail.net','trash-mail.tk','trash2009.com',
+  'trash2010.com','trash2011.com','trashdevil.com','trashdevil.de',
+  'trashemail.de','trashemails.de','trashimail.com','trashinbox.com',
+  'trashmail.app','trashmail.at','trashmail.com','trashmail.de','trashmail.fr',
+  'trashmail.io','trashmail.me','trashmail.net','trashmail.org','trashmail.xyz',
+  'trashmailer.com','trashme.fr','trashmails.com','trashtienda.com','trasz.com',
+  'trbvm.com','trialmail.de','trillianpro.com','trophymail.net','tsl.school',
+  'ttmail.pro','ttt.dubaimail.com','turual.com','twoweirdtricks.com',
+  'tyldd.com','ubm.md','ugmail.io','ugmail.net','uhmail.com',
+  'umail.net','unids.com','unimail.net','unimail.org','unlimited-webspace.net',
+  'unmail.ru','upliftnow.com','upozorenje.com','uroid.com','us.af',
+  'uwork4.us','variancemail.com','velnet.co.uk','venompen.com','veryrealemail.com',
+  'vidchart.com','viditag.com','viewcastmedia.com','vikingsonly.com',
+  'vipmail.name','vipmail.pw','vomoto.com','vpn.st','vsimcard.com',
+  'vubby.com','walkmail.net','walkmail.ru','webemail.me','weg-werf-email.de',
+  'wegwerf-email.at','wegwerf-email.de','wegwerf-email.net','wegwerf-email.org',
+  'wegwerfadresse.de','wegwerfmail.de','wegwerfmail.info','wegwerfmail.net',
+  'wegwerfmail.org','wetrainbayarea.com','wh4f.org','whyspam.me','willhackforfood.biz',
+  'willselfdestruct.com','winemaven.info','wronghead.com','wuzup.net',
+  'wuzupmail.net','www.e4ward.com','wwwnew.eu','xagloo.com','xemaps.com',
+  'xents.com','xmaily.com','xn--9kq967gxca.net','xoxy.net','xpected.de',
+  'xwaretech.com','xww.ro','xyzfree.net','yapped.net','yeah.net',
+  'yellowsubmarinemail.com','yepmail.net','yert.ye.vc','yodx.ro',
+  'yomail.info','yopmail.com','yopmail.fr','yopmail.net','yopmail.org',
+  'youam.ru','yougotgoated.com','youmail.ga','yourdomain.com','yourewronghereswhy.com',
+  'ypmail.webarnak.fr.eu.org','yuurok.com','z1p.biz','za.com','zebins.com',
+  'zebins.eu','zehnminuten.de','zeinmax.com','zemail.me','zetmail.com',
+  'zibet.com','zik.dj','zippymail.info','zoemail.net','zoemail.org',
+  'zomg.info','zombo.com','zomg.info','zxcv.com','zymuying.com',
+  'mailtemp.net','mailtemp.org','guerrillamail.com','mailnesia.com',
+  'spoofmail.de','spamfighters.net','spam4.me','spamgoes.in',
+  'tempmail.ninja','mohmal.com','tempr.email','discard.email',
+  'throwam.com','mailinater.com','tempr.email','spamwc.de',
+  '20mail.it','20minutemail.it','22mail.ru','anonbox.net',
+  'cool.fr.nf','correo.blogos.net','courriel.fr.nf','dayrep.com',
+  'e4ward.com','fakemailgenerator.com','gmailnator.com','guerrillamail.biz',
+  'mail.mezimages.net','mail-temporaire.fr','maileater.com','mailinator.net',
+  'mailmetrash.com','mailnull.com','mailsac.com','mailscrap.com',
+  'mailshell.com','mt2015.com','no-spam.ws','nobulk.com','noclickemail.com',
+  'nogmailspam.info','nospam.ze.tc','nowmymail.com','nwldx.com',
+  'pimpedupmyspace.com','pjjkp.com','raxtest.com','rejectmail.com',
+  's0ny.net','speed.1s.fr','spambox.info','spamex.com','spamgrave.com',
+  'spaml.de','spamoff.de','spoofmail.de','stop-my-spam.com','super-auswahl.de',
+  'teewars.org','temp.emeraldwebmail.com','tempail.com','tempemail.biz',
+  'tempinbox.co.uk','tempsky.com','thelimestones.com','throwablemail.com',
+  'trashdevil.de','trashinbox.com','trashme.fr','trasz.com','trbvm.com',
+  'uploadnolimit.com','vomoto.com','wh4f.org','whyspam.me','xoxy.net',
+  'yepmail.net','yomail.info','zahav.net.il','zemail.me'
+]);
 
-function parse(raw){return raw.split(/[\n,;]+/).map(e=>e.trim().toLowerCase()).filter(Boolean);}
+/* ============================================================
+   ROLE-BASED PREFIXES
+   ============================================================ */
+const ROLE_PREFIXES = new Set([
+  'admin','info','support','noreply','no-reply','contact','help','sales',
+  'billing','webmaster','postmaster','abuse','security','marketing',
+  'newsletter','notifications','team','staff','office','hr','career',
+  'jobs','hello','enquiries','enquiry','feedback','service','legal',
+  'privacy','compliance','finance','accounting','press','media','it',
+  'sys','sysadmin','root','hostmaster','mailer-daemon','nobody',
+  'do-not-reply','donotreply','bounce','bounces','error','errors',
+  'mail','email','unsubscribe','list','listserv','majordomo'
+]);
 
-function vFmt(e){return/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(e);}
+/* ============================================================
+   FREE EMAIL PROVIDERS
+   ============================================================ */
+const FREE_PROVIDERS = new Set([
+  'gmail.com','yahoo.com','hotmail.com','outlook.com','live.com',
+  'icloud.com','me.com','aol.com','mail.com','protonmail.com',
+  'zoho.com','yandex.com','gmx.com','gmx.net','inbox.com',
+  'fastmail.com','hushmail.com','lavabit.com','tutanota.com',
+  'yahoo.co.uk','yahoo.fr','yahoo.de','yahoo.es','yahoo.it',
+  'hotmail.co.uk','hotmail.fr','hotmail.de','windowslive.com'
+]);
 
-function vDom(e){const p=(e.split('@')[1]||'').split('.');if(p.length<2)return false;const t=p[p.length-1];return t.length>=2&&t.length<=12&&/^[a-z]+$/.test(t)&&p.every(x=>x.length>0&&/^[a-z0-9-]+$/.test(x));}
+/* ============================================================
+   CHECK DEFINITIONS
+   ============================================================ */
+const CHECK_DEFS = [
+  { id:'format',   emoji:'🔤', name:'Format / Syntax',       desc:'RFC 5322 compliance check', default:true },
+  { id:'domain',   emoji:'🌐', name:'Domain Structure',       desc:'Valid TLD & structure',      default:true },
+  { id:'mx',       emoji:'📡', name:'MX Record Simulation',   desc:'Known invalid MX domains',   default:true },
+  { id:'disposable',emoji:'🚫',name:'Disposable Detection',   desc:'500+ temp mail services',    default:true },
+  { id:'duplicate',emoji:'🔁', name:'Duplicate Detection',    desc:'Flag repeated entries',      default:true },
+  { id:'role',     emoji:'👤', name:'Role-Based Detection',   desc:'admin@, info@, noreply@…',   default:true },
+  { id:'length',   emoji:'📏', name:'Length Validation',      desc:'RFC max length rules',       default:true },
+  { id:'chars',    emoji:'⚠',  name:'Special Char Abuse',     desc:'Illegal character patterns', default:true },
+  { id:'free',     emoji:'📧', name:'Free Provider Flag',     desc:'Gmail, Yahoo, Outlook…',     default:false },
+  { id:'typo',     emoji:'✏',  name:'Common Typo Detection',  desc:'gmial, yahooo, outloook…',   default:true },
+];
 
-function vDisp(e){return DISP.has((e.split('@')[1]||'').toLowerCase());}
+/* ============================================================
+   KNOWN BAD DOMAINS (MX sim)
+   ============================================================ */
+const BAD_MX_DOMAINS = new Set([
+  'example.com','test.com','invalid.com','nowhere.com','fake.com',
+  'notreal.org','nonexistent.net','badomain.xyz','nxdomain.test',
+  'domain.test','localhost','localdomain','example.org','example.net',
+  'test.org','testing.com','invalid.invalid','null.net','void.net'
+]);
 
-async function run(){
-  const raw=document.getElementById('ei').value;
-  if(!raw.trim()){alert('Please paste some emails first.');return;}
-  const emails=parse(raw);if(!emails.length)return;
-  document.getElementById('rb').disabled=true;
-  document.getElementById('rb').textContent='VALIDATING...';
-  const pb=document.getElementById('pb'),pf=document.getElementById('pf');
-  pb.classList.add('on');pf.style.width='0%';
-  res=[];const seen=new Map();
-  for(let i=0;i<emails.length;i++){
-    const e=emails[i];
-    await new Promise(r=>setTimeout(r,15));
-    const iss=[];let st='valid';
-    if(ac.has('format')&&!vFmt(e)){iss.push('Invalid format');st='invalid';}
-    if(st!=='invalid'&&ac.has('domain')&&!vDom(e)){iss.push('Bad domain');st='invalid';}
-    if(st!=='invalid'&&ac.has('disposable')&&vDisp(e)){iss.push('Disposable');st='disposable';}
-    if(ac.has('duplicate')){if(seen.has(e)){iss.push('Duplicate');if(st==='valid')st='duplicate';}else seen.set(e,true);}
-    res.push({email:e,status:st,issues:iss});
-    pf.style.width=((i+1)/emails.length*100)+'%';
+/* ============================================================
+   TYPO PATTERNS
+   ============================================================ */
+const TYPO_PATTERNS = [
+  { pattern:/gmial\.com$/, fix:'gmail.com' },
+  { pattern:/gmai\.com$/, fix:'gmail.com' },
+  { pattern:/yahooo\.com$/, fix:'yahoo.com' },
+  { pattern:/yaho\.com$/, fix:'yahoo.com' },
+  { pattern:/outloook\.com$/, fix:'outlook.com' },
+  { pattern:/hotmial\.com$/, fix:'hotmail.com' },
+  { pattern:/hotmai\.com$/, fix:'hotmail.com' },
+  { pattern:/hotnail\.com$/, fix:'hotmail.com' },
+  { pattern:/gmal\.com$/, fix:'gmail.com' },
+  { pattern:/gnail\.com$/, fix:'gmail.com' },
+  { pattern:/gamil\.com$/, fix:'gmail.com' },
+  { pattern:/outlok\.com$/, fix:'outlook.com' },
+  { pattern:/protonmial\.com$/, fix:'protonmail.com' },
+];
+
+/* ============================================================
+   APP STATE
+   ============================================================ */
+let state = {
+  user: null,
+  results: [],
+  history: JSON.parse(localStorage.getItem('mcp_history') || '[]'),
+  activeChecks: new Set(CHECK_DEFS.filter(c=>c.default).map(c=>c.id)),
+  currentFilter: 'all',
+  theme: localStorage.getItem('mcp_theme') || 'dark',
+  stats: JSON.parse(localStorage.getItem('mcp_stats') || JSON.stringify({total:0,valid:0,invalid:0,flagged:0,duplicate:0,riskSum:0,riskCount:0,issueMap:{},domainMap:{},dispMap:{}}))
+};
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme(state.theme);
+  buildCheckGrid();
+
+  const saved = localStorage.getItem('mcp_user');
+  if (saved) {
+    state.user = JSON.parse(saved);
+    bootApp();
   }
-  document.getElementById('st').textContent=res.length;
-  document.getElementById('sv').textContent=res.filter(r=>r.status==='valid').length;
-  document.getElementById('si').textContent=res.filter(r=>r.status==='invalid').length;
-  document.getElementById('sw').textContent=res.filter(r=>r.status==='duplicate'||r.status==='disposable').length;
-  cf='all';document.querySelectorAll('.fb').forEach((b,i)=>b.classList.toggle('active',i===0));
-  render(res);
-  document.getElementById('er').style.display='flex';
-  document.getElementById('rb').disabled=false;
-  document.getElementById('rb').textContent='▶ RUN VALIDATION';
-  setTimeout(()=>pb.classList.remove('on'),600);
-}
 
-function sf(f,btn){cf=f;document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render(f==='all'?res:res.filter(r=>r.status===f));}
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if (!state.user) return;
+    if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); runBulk(); }
+    if (e.ctrlKey && e.key === 'l') { e.preventDefault(); document.getElementById('bulk-input').value=''; }
+    if (e.ctrlKey && e.key === 'k') { e.preventDefault(); showPage('validator', document.querySelectorAll('.nav-item')[1]); }
+  });
 
-function render(list){
-  const el=document.getElementById('rl');
-  if(!list.length){el.innerHTML='<div class="empty"><div class="ic">🔍</div><p>No results for this filter.</p></div>';return;}
-  el.innerHTML=list.map((r,i)=>`<div class="rr" style="animation-delay:${Math.min(i*.018,.35)}s"><span class="et" title="${r.email}">${r.email}</span><span class="is">${r.issues.join(' · ')}</span><span class="badge ${r.status}">${r.status.toUpperCase()}</span></div>`).join('');
-}
+  document.getElementById('quick-email').addEventListener('keydown', e => {
+    if (e.key === 'Enter') quickCheck();
+  });
 
-function dl(name,content,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();}
+  // File upload
+  document.getElementById('file-upload').addEventListener('change', function(e) {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => { document.getElementById('bulk-input').value = ev.target.result; notify('File loaded ✓','success'); };
+    r.readAsText(f);
+  });
 
-function xCSV(){
-  const rows=[['Email','Status','Issues']];
-  res.forEach(r=>rows.push([r.email,r.status,r.issues.join('; ')]));
-  dl('email_validation_report.csv',rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n'),'text/csv');
-}
-
-function xJSON(){
-  dl('email_validation_report.json',JSON.stringify({generated:new Date().toISOString(),total:res.length,results:res},null,2),'application/json');
-}
-
-document.getElementById('fi').addEventListener('change',function(e){
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();r.onload=ev=>document.getElementById('ei').value=ev.target.result;r.readAsText(f);
+  // Drag & drop
+  const dz = document.getElementById('drop-zone');
+  if (dz) {
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragging'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragging'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('dragging');
+      const f = e.dataTransfer.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = ev => { document.getElementById('bulk-input').value = ev.target.result; notify('File dropped ✓','success'); };
+      r.readAsText(f);
+    });
+  }
 });
 
-const dz=document.getElementById('dz');
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.style.borderColor='var(--accent)';});
-dz.addEventListener('dragleave',()=>dz.style.borderColor='');
-dz.addEventListener('drop',e=>{e.preventDefault();dz.style.borderColor='';const f=e.dataTransfer.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>document.getElementById('ei').value=ev.target.result;r.readAsText(f);});
+/* ============================================================
+   AUTH
+   ============================================================ */
+function switchAuth(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('login-form').style.display = tab==='login' ? '' : 'none';
+  document.getElementById('register-form').style.display = tab==='register' ? '' : 'none';
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) { notify('Please fill in all fields','error'); return; }
+  if (pass.length < 6) { notify('Invalid credentials','error'); return; }
+  const name = email.split('@')[0].replace(/[._-]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  state.user = { name, email, token: btoa(email+':'+Date.now()) };
+  localStorage.setItem('mcp_user', JSON.stringify(state.user));
+  bootApp();
+}
+
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  if (!name || !email || !pass) { notify('Please fill in all fields','error'); return; }
+  if (pass.length < 8) { notify('Password must be at least 8 characters','error'); return; }
+  if (!email.includes('@')) { notify('Invalid email address','error'); return; }
+  state.user = { name, email, token: btoa(email+':'+Date.now()) };
+  localStorage.setItem('mcp_user', JSON.stringify(state.user));
+  bootApp();
+  notify(`Welcome, ${name}! 🎉`,'success');
+}
+
+function doLogout() {
+  state.user = null;
+  localStorage.removeItem('mcp_user');
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  notify('Signed out successfully','info');
+}
+
+function bootApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  const u = state.user;
+  document.getElementById('user-name-display').textContent = u.name;
+  document.getElementById('user-avatar').textContent = u.name[0].toUpperCase();
+  document.getElementById('settings-user-name').textContent = u.name;
+  document.getElementById('settings-user-email').textContent = u.email;
+  updateDashboard();
+  renderHistory();
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+const pageTitles = { dashboard:'Dashboard', validator:'Bulk Validator', history:'Validation History', analytics:'Analytics', settings:'Settings' };
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[id] || id;
+  if (id === 'analytics') renderAnalytics();
+  if (id === 'history') renderHistory();
+}
+
+/* ============================================================
+   THEME
+   ============================================================ */
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('theme-btn').textContent = t==='dark'?'☀':'🌙';
+  state.theme = t;
+  localStorage.setItem('mcp_theme', t);
+}
+
+function toggleTheme() {
+  applyTheme(state.theme==='dark'?'light':'dark');
+}
+
+/* ============================================================
+   CHECK GRID
+   ============================================================ */
+function buildCheckGrid() {
+  const grid = document.getElementById('check-grid');
+  if (!grid) return;
+  grid.innerHTML = CHECK_DEFS.map(c => `
+    <div class="check-row ${state.activeChecks.has(c.id)?'active':''}" data-id="${c.id}" onclick="toggleCheck(this,'${c.id}')">
+      <div class="check-left">
+        <span class="check-emoji">${c.emoji}</span>
+        <div>
+          <div class="check-name">${c.name}</div>
+          <div class="check-desc">${c.desc}</div>
+        </div>
+      </div>
+      <div class="toggle"></div>
+    </div>`).join('');
+
+  // Settings page checks
+  const sc = document.getElementById('settings-checks');
+  if (sc) {
+    sc.innerHTML = CHECK_DEFS.map(c => `
+      <div class="setting-row">
+        <div><div class="setting-name">${c.emoji} ${c.name}</div><div class="setting-desc">${c.desc}</div></div>
+        <div class="check-row ${state.activeChecks.has(c.id)?'active':''}" data-id="${c.id}" style="padding:6px;border-radius:20px;background:none;border:none;" onclick="toggleCheck(this,'${c.id}')">
+          <div class="toggle"></div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function toggleCheck(el, id) {
+  el.classList.toggle('active');
+  if (state.activeChecks.has(id)) state.activeChecks.delete(id);
+  else state.activeChecks.add(id);
+}
+
+/* ============================================================
+   VALIDATION ENGINE
+   ============================================================ */
+function validateEmail(email) {
+  const checks = {};
+  const issues = [];
+  let riskScore = 0;
+
+  const local = email.includes('@') ? email.split('@')[0] : email;
+  const domain = email.includes('@') ? email.split('@')[1] : '';
+  const tld = domain.includes('.') ? domain.split('.').pop() : '';
+
+  // 1. FORMAT
+  if (state.activeChecks.has('format')) {
+    const ok = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/.test(email)
+      && !/\.\./.test(email) && !email.startsWith('.') && !local.startsWith('.') && !local.endsWith('.');
+    checks.format = ok ? 'pass' : 'fail';
+    if (!ok) { issues.push('Invalid format'); riskScore += 40; }
+  }
+
+  // 2. DOMAIN
+  if (state.activeChecks.has('domain')) {
+    const ok = domain.length > 0 && tld.length >= 2 && tld.length <= 12
+      && /^[a-z]+$/.test(tld) && domain.split('.').every(p => p.length > 0 && /^[a-z0-9-]+$/i.test(p));
+    checks.domain = ok ? 'pass' : 'fail';
+    if (!ok) { issues.push('Bad domain'); riskScore += 30; }
+  }
+
+  // 3. MX SIMULATION
+  if (state.activeChecks.has('mx')) {
+    const ok = !BAD_MX_DOMAINS.has(domain.toLowerCase());
+    checks.mx = ok ? 'pass' : 'fail';
+    if (!ok) { issues.push('No MX record'); riskScore += 25; }
+  }
+
+  // 4. DISPOSABLE
+  if (state.activeChecks.has('disposable')) {
+    const isDisp = DISPOSABLE.has(domain.toLowerCase());
+    checks.disposable = isDisp ? 'fail' : 'pass';
+    if (isDisp) { issues.push('Disposable email'); riskScore += 60; }
+  }
+
+  // 5. ROLE (checked during bulk)
+  if (state.activeChecks.has('role')) {
+    const isRole = ROLE_PREFIXES.has(local.toLowerCase().replace(/[0-9_.-]/g,''));
+    checks.role = isRole ? 'warn' : 'pass';
+    if (isRole) { issues.push('Role-based address'); riskScore += 15; }
+  }
+
+  // 6. LENGTH
+  if (state.activeChecks.has('length')) {
+    const localOk = local.length <= 64;
+    const domainOk = domain.length <= 255;
+    const totalOk = email.length <= 320;
+    const ok = localOk && domainOk && totalOk;
+    checks.length = ok ? 'pass' : 'fail';
+    if (!ok) { issues.push('Exceeds length limit'); riskScore += 20; }
+  }
+
+  // 7. SPECIAL CHARS
+  if (state.activeChecks.has('chars')) {
+    const doubleAt = (email.match(/@/g)||[]).length > 1;
+    const badChars = /[<>()[\]\\,;:\s"]/.test(local);
+    const ok = !doubleAt && !badChars;
+    checks.chars = ok ? 'pass' : 'fail';
+    if (!ok) { issues.push('Illegal characters'); riskScore += 25; }
+  }
+
+  // 8. FREE PROVIDER
+  if (state.activeChecks.has('free')) {
+    const isFree = FREE_PROVIDERS.has(domain.toLowerCase());
+    checks.free = isFree ? 'info' : 'pass';
+    if (isFree) { issues.push('Free provider'); riskScore += 5; }
+  }
+
+  // 9. TYPO
+  if (state.activeChecks.has('typo')) {
+    const typo = TYPO_PATTERNS.find(t => t.pattern.test(domain));
+    checks.typo = typo ? 'warn' : 'pass';
+    if (typo) { issues.push(`Possible typo → ${typo.fix}`); riskScore += 20; }
+  }
+
+  // Determine overall status
+  let status = 'valid';
+  const failedCritical = ['format','domain','mx','length','chars'].some(k => checks[k]==='fail');
+  if (failedCritical) status = 'invalid';
+  else if (checks.disposable==='fail') status = 'disposable';
+  else if (checks.role==='warn') status = 'role';
+
+  riskScore = Math.min(100, riskScore);
+
+  return { email, status, issues, checks, riskScore };
+}
+
+/* ============================================================
+   QUICK CHECK
+   ============================================================ */
+function quickCheck() {
+  const email = document.getElementById('quick-email').value.trim().toLowerCase();
+  if (!email) return;
+  const r = validateEmail(email);
+  const el = document.getElementById('quick-result');
+  const colors = { valid: 'var(--success)', invalid: 'var(--danger)', disposable: 'var(--danger)', role: 'var(--warn)', duplicate: 'var(--warn)' };
+  const icons = { valid:'✅', invalid:'❌', disposable:'🚫', role:'👤', duplicate:'🔁' };
+  const riskColor = r.riskScore < 30 ? 'var(--success)' : r.riskScore < 60 ? 'var(--warn)' : 'var(--danger)';
+  el.style.display = 'block';
+  el.style.borderColor = colors[r.status] || 'var(--border2)';
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <span style="font-family:var(--font-mono);font-size:12px;">${email}</span>
+      <span class="badge ${r.status}">${icons[r.status]||''} ${r.status.toUpperCase()}</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+      ${r.issues.map(i=>`<span style="font-size:11px;color:var(--text3);background:var(--surface);padding:2px 8px;border-radius:4px;border:1px solid var(--border);">${i}</span>`).join('')||'<span style="font-size:11px;color:var(--success);">All checks passed</span>'}
+    </div>
+    <div style="font-size:11px;color:var(--text3);">Risk score: <span style="color:${riskColor};font-weight:600;font-family:var(--font-mono);">${r.riskScore}/100</span></div>
+  `;
+}
+
+/* ============================================================
+   BULK VALIDATION
+   ============================================================ */
+async function runBulk() {
+  const raw = document.getElementById('bulk-input').value;
+  if (!raw.trim()) { notify('Please paste some emails first','error'); return; }
+
+  const emails = raw.split(/[\n,;]+/).map(e=>e.trim().toLowerCase()).filter(Boolean);
+  if (!emails.length) return;
+
+  document.getElementById('run-btn').disabled = true;
+  document.getElementById('run-btn').textContent = 'Validating…';
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('prog-fill').style.width = '0%';
+
+  state.results = [];
+  const seen = new Map();
+
+  for (let i = 0; i < emails.length; i++) {
+    await new Promise(r => setTimeout(r, 8));
+    const r = validateEmail(emails[i]);
+
+    // Duplicate check
+    if (state.activeChecks.has('duplicate')) {
+      if (seen.has(emails[i])) {
+        r.issues.push('Duplicate');
+        if (r.status==='valid') r.status='duplicate';
+        r.checks.duplicate = 'fail';
+        r.riskScore = Math.min(100, r.riskScore+10);
+      } else {
+        seen.set(emails[i], true);
+        r.checks.duplicate = 'pass';
+      }
+    }
+
+    state.results.push(r);
+    document.getElementById('prog-fill').style.width = ((i+1)/emails.length*100)+'%';
+
+    // Update live counters
+    const v = state.results.filter(x=>x.status==='valid').length;
+    const inv = state.results.filter(x=>x.status==='invalid').length;
+    const fl = state.results.filter(x=>!['valid','invalid'].includes(x.status)).length;
+    const avgRisk = Math.round(state.results.reduce((a,x)=>a+x.riskScore,0)/state.results.length);
+    document.getElementById('rs-total').textContent = state.results.length;
+    document.getElementById('rs-valid').textContent = v;
+    document.getElementById('rs-invalid').textContent = inv;
+    document.getElementById('rs-flagged').textContent = fl;
+    document.getElementById('rs-risk').textContent = avgRisk;
+  }
+
+  // Save to history
+  const run = {
+    id: Date.now(),
+    ts: new Date().toISOString(),
+    total: state.results.length,
+    valid: state.results.filter(x=>x.status==='valid').length,
+    invalid: state.results.filter(x=>x.status==='invalid').length,
+    flagged: state.results.filter(x=>!['valid','invalid'].includes(x.status)).length,
+    avgRisk: Math.round(state.results.reduce((a,x)=>a+x.riskScore,0)/state.results.length),
+    results: state.results
+  };
+  state.history.unshift(run);
+  if (state.history.length > 50) state.history = state.history.slice(0,50);
+  localStorage.setItem('mcp_history', JSON.stringify(state.history));
+
+  // Aggregate stats
+  updateAggStats(state.results);
+
+  // Render
+  filterResults('all', document.querySelector('.filter-chip'));
+  updateDashboard();
+
+  document.getElementById('run-btn').disabled = false;
+  document.getElementById('run-btn').textContent = '▶ Run Validation';
+  notify(`Validated ${state.results.length} emails ✓`, 'success');
+}
+
+function updateAggStats(results) {
+  const s = state.stats;
+  s.total += results.length;
+  s.valid += results.filter(r=>r.status==='valid').length;
+  s.invalid += results.filter(r=>r.status==='invalid').length;
+  s.flagged += results.filter(r=>!['valid','invalid'].includes(r.status)).length;
+  s.duplicate += results.filter(r=>r.status==='duplicate').length;
+  results.forEach(r => {
+    s.riskSum += r.riskScore; s.riskCount++;
+    r.issues.forEach(iss => { s.issueMap[iss]=(s.issueMap[iss]||0)+1; });
+    const dom = r.email.split('@')[1]||'';
+    if (dom) s.domainMap[dom]=(s.domainMap[dom]||0)+1;
+    if (r.status==='disposable') s.dispMap[dom]=(s.dispMap[dom]||0)+1;
+  });
+  localStorage.setItem('mcp_stats', JSON.stringify(s));
+  state.stats = s;
+}
+
+/* ============================================================
+   FILTER & RENDER RESULTS
+   ============================================================ */
+function filterResults(filter, btn) {
+  state.currentFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const list = filter==='all' ? state.results : state.results.filter(r=>r.status===filter);
+  renderResultList(list);
+}
+
+function renderResultList(list) {
+  const el = document.getElementById('results-list');
+  if (!list.length) {
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-sub">No results for this filter</div></div>';
+    return;
+  }
+  const statusIcons = { valid:'✅', invalid:'❌', disposable:'🚫', role:'👤', duplicate:'🔁' };
+  const rc = r => r.riskScore<30?'risk-low':r.riskScore<60?'risk-med':'risk-high';
+  el.innerHTML = list.map((r,i) => `
+    <div class="res-row" style="animation-delay:${Math.min(i*.012,.3)}s" onclick="openModal(${state.results.indexOf(r)})">
+      <span class="res-email">${r.email}</span>
+      <span class="res-issues">${r.issues.slice(0,2).join(' · ')}${r.issues.length>2?' +'+( r.issues.length-2):''}</span>
+      <div class="risk-score ${rc(r)}">
+        <div class="risk-dot"></div>
+        <span style="font-size:10px;">${r.riskScore}</span>
+      </div>
+      <span class="badge ${r.status}">${statusIcons[r.status]||''} ${r.status.toUpperCase()}</span>
+    </div>`).join('');
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+function openModal(idx) {
+  const r = state.results[idx];
+  if (!r) return;
+  document.getElementById('modal-email-text').textContent = r.email;
+
+  const checkLabels = {
+    format: { emoji:'🔤', name:'Format / Syntax' },
+    domain: { emoji:'🌐', name:'Domain Structure' },
+    mx:     { emoji:'📡', name:'MX Record' },
+    disposable: { emoji:'🚫', name:'Disposable Check' },
+    duplicate:  { emoji:'🔁', name:'Duplicate Check' },
+    role:   { emoji:'👤', name:'Role-Based Address' },
+    length: { emoji:'📏', name:'Length Validation' },
+    chars:  { emoji:'⚠', name:'Special Characters' },
+    free:   { emoji:'📧', name:'Free Provider' },
+    typo:   { emoji:'✏', name:'Typo Detection' },
+  };
+
+  const statusText = { pass:'PASS', fail:'FAIL', warn:'WARNING', info:'INFO', skip:'SKIPPED' };
+
+  document.getElementById('modal-checks').innerHTML = Object.entries(r.checks).map(([k,v]) => {
+    const def = checkLabels[k];
+    if (!def) return '';
+    return `<div class="cr-item ${v}">
+      <span class="cr-icon">${def.emoji}</span>
+      <span class="cr-name">${def.name}</span>
+      <span class="cr-status">${statusText[v]||v.toUpperCase()}</span>
+    </div>`;
+  }).join('');
+
+  const riskColor = r.riskScore<30?'var(--success)':r.riskScore<60?'var(--warn)':'var(--danger)';
+  document.getElementById('modal-risk-val').textContent = r.riskScore+'/100';
+  document.getElementById('modal-risk-val').style.color = riskColor;
+  document.getElementById('modal-risk-bar').style.width = r.riskScore+'%';
+  document.getElementById('modal-risk-bar').style.background = riskColor;
+
+  document.getElementById('detail-modal').classList.add('open');
+  setTimeout(() => { document.getElementById('modal-risk-bar').style.width = r.riskScore+'%'; }, 50);
+}
+
+function closeModal(e) {
+  if (!e || e.target.id==='detail-modal' || e.currentTarget.tagName!=='DIV') {
+    document.getElementById('detail-modal').classList.remove('open');
+  }
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function updateDashboard() {
+  const s = state.stats;
+  animateNum('dash-total', s.total);
+  animateNum('dash-invalid', s.invalid);
+  animateNum('dash-flagged', s.flagged+s.duplicate);
+  document.getElementById('dash-valid-pct').textContent = s.total>0 ? Math.round(s.valid/s.total*100)+'%' : '—';
+
+  // Donut
+  const circ = 251.2;
+  const vp = s.total>0?s.valid/s.total:0;
+  const ip = s.total>0?s.invalid/s.total:0;
+  const fp = s.total>0?(s.flagged+s.duplicate)/s.total:0;
+  document.getElementById('d-valid').style.strokeDasharray = `${vp*circ} ${circ}`;
+  document.getElementById('d-invalid').style.strokeDashoffset = 62.8 - vp*circ;
+  document.getElementById('d-invalid').style.strokeDasharray = `${ip*circ} ${circ}`;
+  document.getElementById('d-flagged').style.strokeDashoffset = 62.8 - (vp+ip)*circ;
+  document.getElementById('d-flagged').style.strokeDasharray = `${fp*circ} ${circ}`;
+  document.getElementById('donut-pct').textContent = s.total>0 ? Math.round(vp*100)+'%' : '—';
+  document.getElementById('dl-valid').textContent = s.valid;
+  document.getElementById('dl-invalid').textContent = s.invalid;
+  document.getElementById('dl-flagged').textContent = s.flagged;
+  document.getElementById('dl-dup').textContent = s.duplicate;
+
+  // Gauge
+  const avgRisk = s.riskCount>0 ? Math.round(s.riskSum/s.riskCount) : 0;
+  document.getElementById('gauge-val').textContent = s.riskCount>0 ? avgRisk : '—';
+  const riskColor = avgRisk<30?'var(--success)':avgRisk<60?'var(--warn)':'var(--danger)';
+  document.getElementById('gauge-path').style.stroke = riskColor;
+  const gaugeOffset = 157 - (avgRisk/100)*157;
+  document.getElementById('gauge-path').style.strokeDashoffset = gaugeOffset;
+  document.getElementById('gauge-label-text').textContent = avgRisk<30?'Low Risk':avgRisk<60?'Medium Risk':'High Risk';
+  document.getElementById('gauge-val').style.color = riskColor;
+
+  // Bar chart
+  const bc = document.getElementById('bar-chart');
+  const issueMap = s.issueMap;
+  const topIssues = Object.entries(issueMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if (topIssues.length) {
+    const maxV = topIssues[0][1];
+    const colors = ['#e05555','#e09a35','#c9a84c','#4c7bc9','#4caf82'];
+    bc.innerHTML = topIssues.map(([k,v],i)=>`
+      <div class="bar-item">
+        <div class="bar-header"><span class="bar-name">${k}</span><span class="bar-pct">${v}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${v/maxV*100}%;background:${colors[i]};"></div></div>
+      </div>`).join('');
+  }
+
+  // Recent table
+  if (state.history.length) {
+    const recent = state.history.slice(0,5);
+    document.getElementById('recent-table-wrap').innerHTML = `
+      <table class="data-table">
+        <thead><tr>
+          <th>Run ID</th><th>Date</th><th>Total</th><th>Valid</th><th>Invalid</th><th>Risk</th><th>Status</th>
+        </tr></thead>
+        <tbody>${recent.map(h=>`
+          <tr>
+            <td class="mono" style="color:var(--text3);font-size:11px;">#${h.id.toString().slice(-6)}</td>
+            <td style="font-size:12px;">${new Date(h.ts).toLocaleString()}</td>
+            <td class="mono">${h.total}</td>
+            <td style="color:var(--success);">${h.valid}</td>
+            <td style="color:var(--danger);">${h.invalid}</td>
+            <td><div class="risk-score ${h.avgRisk<30?'risk-low':h.avgRisk<60?'risk-med':'risk-high'}"><div class="risk-dot"></div>${h.avgRisk}</div></td>
+            <td><span class="badge valid">Completed</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+}
+
+function animateNum(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = parseInt(el.textContent)||0;
+  const diff = target - start;
+  if (diff===0) return;
+  const dur = 600;
+  const t0 = Date.now();
+  const tick = () => {
+    const prog = Math.min(1,(Date.now()-t0)/dur);
+    const ease = 1-Math.pow(1-prog,3);
+    el.textContent = Math.round(start+diff*ease);
+    if (prog<1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* ============================================================
+   HISTORY
+   ============================================================ */
+function renderHistory() {
+  const q = (document.getElementById('history-search')||{}).value||'';
+  const list = state.history.filter(h => !q || new Date(h.ts).toLocaleString().includes(q));
+  const el = document.getElementById('history-list');
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No history yet</div><div class="empty-sub">Run a validation to see it here</div></div>';
+    return;
+  }
+  el.innerHTML = list.map(h=>`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);">#${h.id.toString().slice(-6)}</span>
+          <span style="font-size:12px;color:var(--text2);">${new Date(h.ts).toLocaleString()}</span>
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <span style="font-size:12px;color:var(--text2);">Total: <strong style="color:var(--accent2);">${h.total}</strong></span>
+          <span style="font-size:12px;color:var(--text2);">Valid: <strong style="color:var(--success);">${h.valid}</strong></span>
+          <span style="font-size:12px;color:var(--text2);">Invalid: <strong style="color:var(--danger);">${h.invalid}</strong></span>
+          <span style="font-size:12px;color:var(--text2);">Flagged: <strong style="color:var(--warn);">${h.flagged}</strong></span>
+          <div class="risk-score ${h.avgRisk<30?'risk-low':h.avgRisk<60?'risk-med':'risk-high'}" style="font-size:12px;">
+            <div class="risk-dot"></div>Risk: ${h.avgRisk}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm" onclick="reloadRun(${h.id})">View</button>
+        <button class="btn-sm" onclick="exportRun(${h.id},'csv')">CSV</button>
+        <button class="btn-sm" onclick="exportRun(${h.id},'json')">JSON</button>
+      </div>
+    </div>`).join('');
+}
+
+function reloadRun(id) {
+  const run = state.history.find(h=>h.id===id);
+  if (!run) return;
+  state.results = run.results;
+  showPage('validator', document.querySelectorAll('.nav-item')[1]);
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('rs-total').textContent = run.total;
+  document.getElementById('rs-valid').textContent = run.valid;
+  document.getElementById('rs-invalid').textContent = run.invalid;
+  document.getElementById('rs-flagged').textContent = run.flagged;
+  document.getElementById('rs-risk').textContent = run.avgRisk;
+  filterResults('all', document.querySelector('.filter-chip'));
+  notify('History run loaded','info');
+}
+
+function clearHistory() {
+  state.history = [];
+  localStorage.removeItem('mcp_history');
+  renderHistory();
+}
+
+function exportRun(id, fmt) {
+  const run = state.history.find(h=>h.id===id);
+  if (!run) return;
+  if (fmt==='csv') exportResultsToFile(run.results,'csv',`mcp_run_${id}`);
+  else exportResultsToFile(run.results,'json',`mcp_run_${id}`);
+}
+
+function exportAllHistory() {
+  dl('mcp_full_history.json', JSON.stringify(state.history,null,2), 'application/json');
+}
+
+/* ============================================================
+   ANALYTICS
+   ============================================================ */
+function renderAnalytics() {
+  const s = state.stats;
+
+  // Domain chart
+  const topDoms = Object.entries(s.domainMap||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const dc = document.getElementById('domain-chart');
+  if (dc && topDoms.length) {
+    const mx = topDoms[0][1];
+    dc.innerHTML = topDoms.map(([k,v],i)=>`
+      <div class="bar-item">
+        <div class="bar-header"><span class="bar-name">${k}</span><span class="bar-pct">${v}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${v/mx*100}%;background:var(--accent2);"></div></div>
+      </div>`).join('');
+  }
+
+  // Disposable chart
+  const topDisp = Object.entries(s.dispMap||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const disp = document.getElementById('disp-chart');
+  if (disp && topDisp.length) {
+    const mx = topDisp[0][1];
+    disp.innerHTML = topDisp.map(([k,v])=>`
+      <div class="bar-item">
+        <div class="bar-header"><span class="bar-name">${k}</span><span class="bar-pct">${v}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${v/mx*100}%;background:var(--danger);"></div></div>
+      </div>`).join('');
+  }
+
+  // Issue chart
+  const topIss = Object.entries(s.issueMap||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const ic = document.getElementById('issues-chart');
+  if (ic && topIss.length) {
+    const mx = topIss[0][1];
+    ic.innerHTML = topIss.map(([k,v])=>`
+      <div class="bar-item">
+        <div class="bar-header"><span class="bar-name">${k}</span><span class="bar-pct">${v}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${v/mx*100}%;background:var(--warn);"></div></div>
+      </div>`).join('');
+  }
+
+  // Timeline chart
+  const tlEl = document.getElementById('timeline-chart');
+  if (tlEl && state.history.length > 1) {
+    const runs = state.history.slice(0,10).reverse();
+    const maxT = Math.max(...runs.map(r=>r.total), 1);
+    tlEl.innerHTML = runs.map(h=>`
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:110px;gap:2px;">
+          <div style="background:var(--success);border-radius:3px 3px 0 0;width:100%;height:${h.valid/maxT*100}%;min-height:2px;opacity:0.85;"></div>
+          <div style="background:var(--danger);border-radius:0;width:100%;height:${h.invalid/maxT*100}%;min-height:1px;opacity:0.85;"></div>
+          <div style="background:var(--warn);border-radius:0 0 3px 3px;width:100%;height:${h.flagged/maxT*100}%;min-height:1px;opacity:0.85;"></div>
+        </div>
+        <div style="font-size:9px;color:var(--text3);font-family:var(--font-mono);">${new Date(h.ts).toLocaleDateString('en',{month:'short',day:'numeric'})}</div>
+      </div>`).join('');
+  }
+}
+
+/* ============================================================
+   EXPORT
+   ============================================================ */
+function exportData(fmt) { exportResultsToFile(state.results, fmt, 'email_validation_report'); }
+
+function exportResultsToFile(results, fmt, name) {
+  if (!results.length) { notify('No results to export','error'); return; }
+  if (fmt==='csv') {
+    const rows=[['Email','Status','Risk Score','Issues','Checks Performed']];
+    results.forEach(r=>rows.push([r.email,r.status,r.riskScore,r.issues.join('; '),Object.entries(r.checks).map(([k,v])=>`${k}:${v}`).join(' | ')]));
+    dl(name+'.csv', rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n'),'text/csv');
+  } else if (fmt==='json') {
+    dl(name+'.json',JSON.stringify({generated:new Date().toISOString(),total:results.length,results},null,2),'application/json');
+  } else if (fmt==='txt') {
+    const valid = results.filter(r=>r.status==='valid').map(r=>r.email).join('\n');
+    dl(name+'_valid.txt', valid, 'text/plain');
+  }
+  notify('Export ready ✓','success');
+}
+
+function copyValid() {
+  const valid = state.results.filter(r=>r.status==='valid').map(r=>r.email).join('\n');
+  if (!valid) { notify('No valid emails to copy','error'); return; }
+  navigator.clipboard.writeText(valid).then(()=>notify(`Copied ${valid.split('\n').length} valid emails ✓`,'success'));
+}
+
+function dl(name, content, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content],{type}));
+  a.download = name; a.click();
+}
+
+/* ============================================================
+   NOTIFICATIONS
+   ============================================================ */
+function notify(msg, type='info') {
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  const el = document.createElement('div');
+  el.className = `notif ${type}`;
+  el.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(20px)'; el.style.transition='all .3s'; setTimeout(()=>el.remove(),300); }, 3000);
+}
+
+/* ============================================================
+   SHORTCUTS MODAL
+   ============================================================ */
+function showShortcuts() {
+  notify('Ctrl+Enter: Run · Ctrl+L: Clear · Ctrl+K: Validator', 'info');
+}
 </script>
 </body>
 </html>
